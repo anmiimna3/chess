@@ -3,6 +3,9 @@
 
 #include "piece.h"
 
-class Cell;
+struct Cell{
+    RectangleShape rect;
+    Piece* piece;
+};
 
 #endif
