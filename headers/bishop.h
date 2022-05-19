@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BISHOP_H
+#define BISHOP_H
+
 #include "piece.h"
 
 
@@ -18,3 +20,5 @@ class Bishop: public Piece{
 
         pair<int, int>* moves(Piece* board[8][8]);
 };
+
+#endif

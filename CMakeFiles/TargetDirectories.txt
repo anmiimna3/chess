@@ -1,0 +1,3 @@
+/home/amin/Documents/ap/Project/phase2/CMakeFiles/rebuild_cache.dir
+/home/amin/Documents/ap/Project/phase2/CMakeFiles/edit_cache.dir
+/home/amin/Documents/ap/Project/phase2/CMakeFiles/chess.dir

@@ -1,3 +1,7 @@
+#ifndef BOARD_H
+#define BOARD_H
+
+
 #include "includes.h"
 #include "templates.h"
 #include "translate.h"
@@ -61,11 +65,18 @@ class Board{
 
         void read();
 
+        void run();
+
+        void draw();
+
     private:
         Piece* board[8][8];
-
+        Cell* display[8][8];
         string turn;
+        RenderWindow *window;
 
         //Initializes the board for the first time
         void initialize();
 };
+
+#endif

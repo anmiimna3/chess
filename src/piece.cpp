@@ -1,5 +1,7 @@
 #include "piece.h"
 
+Piece::~Piece(){}
+
 Piece::Piece(): Name("-"), Color("-"){}
 
 Piece::Piece(string color, string name)
@@ -27,6 +29,8 @@ bool Piece::liniar(bool found[4], int index, int x, int y, int i, int j, Piece* 
             found[index] = 1;
         return true;
     }
+
+pair<int, int>* Piece::moves(Piece* board[8][8]){}
 
 bool Piece::validTake(int i, int j){
         return validMove(i, j);

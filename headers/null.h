@@ -1,4 +1,6 @@
-#pragma once
+#ifndef NULL_H
+#define NULL_H
+
 #include "piece.h"
 
 
@@ -7,3 +9,5 @@ class Null: public Piece{
         Null();
         Null(int i, int j);
 };
+
+#endif

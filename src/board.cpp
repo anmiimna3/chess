@@ -493,6 +493,24 @@ void Board::read(){
     black->whiteKing = white;
 }
 
+void Board::run(){
+    initialize();
+    window->display();
+    while(window->isOpen()){
+        Event event;
+        while(window->pollEvent(event)){
+            if (event.type == Event::Closed){
+                window->close();
+            }
+        }
+        window->clear(Color::Black);
+        draw();
+        window->display();
+    }
+}
+
+void Board::draw(){};
+
 //Initializes the board for the first time
 void Board::initialize(){
     for (int i = 2; i < 6; i++){

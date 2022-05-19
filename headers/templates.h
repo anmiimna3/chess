@@ -1,3 +1,6 @@
+#ifndef TEMPLATES_H
+#define TEMPLATES_H
+
 #include "piece.h"
 #include <vector>
 
@@ -17,9 +20,31 @@ struct movement{
 
 class Costume{
     public:
+        virtual ~Costume();
+
+        Costume();
+
         template <typename T> 
-        static void init(Board* board);
+        static void init(Board* board){
+            int count = T::numberOfPiecesForEachColor;
+            pair<int, int>* black = T::black();
+            pair<int, int>* white = T::white();
+            for (int i = 0; i < count; i++){
+                T* n = new T("B");
+                board->place((Piece*) n, black[i].F, black[i].S);
+            }
+            for (int i = 0; i < count; i++){
+                T* n = new T("W");
+                board->place((Piece*) n, white[i].F, white[i].S);
+            }
+        }
 
         template <typename T>
-        static Piece* placing(Board* board, int i, int j, string color);
+        static Piece* placing(Board* board, int i, int j, string color){
+            T* t = new T(color);
+            board->place(t, i, j);
+            return t;
+        }
 };
+
+#endif

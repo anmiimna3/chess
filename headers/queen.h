@@ -1,4 +1,6 @@
-#pragma once
+#ifndef QUEEN_H
+#define QUEEN_H
+
 #include "piece.h"
 
 class Queen: public Piece{
@@ -17,3 +19,5 @@ class Queen: public Piece{
 
         pair<int, int>* moves(Piece* board[8][8]);
 };
+
+#endif

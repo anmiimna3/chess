@@ -1,4 +1,7 @@
-#pragma once
+#ifndef PAWN_H
+#define PAWN_H
+
+
 #include "piece.h"
 
 #define F first
@@ -27,3 +30,5 @@ class Pawn: public Piece{
 
         pair<int, int>* moves(Piece* board[8][8]);
 };
+
+#endif

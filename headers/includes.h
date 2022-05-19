@@ -5,3 +5,4 @@
 #include "bishop.h"
 #include "knight.h"
 #include "king.h"
+#include "cell.h"

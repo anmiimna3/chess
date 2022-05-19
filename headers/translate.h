@@ -1,3 +1,6 @@
+#ifndef TRANSLATE_H
+#define TRANSLATE_H
+
 #include <iostream>
 
 #define F first
@@ -13,3 +16,5 @@ class Translate{
 
         static string toString(pair<int, int> a, pair<int, int> b, string name);
 };
+
+#endif

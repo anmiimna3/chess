@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ROOK_H
+#define ROOK_H
+
 #include "piece.h"
 
 #define F first
@@ -27,3 +29,5 @@ class Rook: public Piece{
         pair<int, int>* moves(Piece* board[8][8]);
 
 };
+
+#endif

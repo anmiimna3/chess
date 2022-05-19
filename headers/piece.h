@@ -1,10 +1,14 @@
-#pragma once
+#ifndef PIECE_H
+#define PIECE_H
+
 #include <iostream>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 #define F first
 #define S second
 
+using namespace sf;
 using namespace std;
 
 
@@ -12,6 +16,8 @@ using namespace std;
 class Piece{
     friend ostream& operator<< (ostream& stream, const Piece& piece);
     public:
+        virtual ~Piece();
+        
         Piece();
 
         Piece(string color, string name);
@@ -48,3 +54,5 @@ class Piece{
         const string Name;
         pair<int, int> Position;
 };
+
+#endif

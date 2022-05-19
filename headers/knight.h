@@ -1,3 +1,6 @@
+#ifndef KNIGHT_H
+#define KNIGHT_H
+
 #include "piece.h"
 
 
@@ -17,3 +20,5 @@ class Knight: public Piece{
 
         pair<int, int>* moves(Piece* board[8][8]);
 };
+
+#endif
