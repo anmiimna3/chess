@@ -71,6 +71,8 @@ class Board{
 
         void mouseClicked(Vector2i v);
 
+        void resetCellColors();
+
     private:
         Piece* board[8][8];
         Cell* display[8][8];

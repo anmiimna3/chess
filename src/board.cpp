@@ -533,12 +533,18 @@ void Board::mouseClicked(Vector2i v){
         return;
     cerr << "selected: " << selectX << " " << selectY << endl;
     if (!selected && turn == board[selectY][selectX]->getColor()){
+        resetCellColors();
         selected = true;
         selectedPiece = {selectY, selectX};
+        pair<int, int> *moves = board[selectY][selectX]->moves(board);
+        for (int i = 1; i < moves[0].F + 1; i++){
+            display[selectY + moves[i].F][selectX + moves[i].S]->rect.setFillColor(Consts::possibleToMove);
+        }
         display[selectY][selectX]->rect.setFillColor(Consts::selected);
         return;
     }
     if (selected && selectX == selectedPiece.S && selectY == selectedPiece.F){
+        resetCellColors();
         selected = false;
         Color temp = (selectX + selectY) % 2 == 0 ? Consts::cellColor.F : Consts::cellColor.S;
         display[selectY][selectX]->rect.setFillColor(temp);
@@ -579,6 +585,14 @@ void Board::setCells(){
             c->rect.setFillColor(temp);
             c->rect.setPosition(generateCellPosition(i, j));
             display[i][j] = c;
+        }
+}
+
+void Board::resetCellColors(){
+    for (int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++){
+            Color temp = (i + j) % 2 == 0 ? Consts::cellColor.F : Consts::cellColor.S;
+            display[i][j]->rect.setFillColor(temp);
         }
 }
 
