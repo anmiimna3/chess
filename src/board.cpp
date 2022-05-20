@@ -492,12 +492,11 @@ void Board::mouseClicked(Vector2i v){
         selectedPiece = {selectY, selectX};
         pair<int, int> *moves = board[selectY][selectX]->moves(board);
         for (int i = 1; i < moves[0].F + 1; i++){
-            // stats stat = move(selectedPiece, {selectY + moves[i].F, selectX + moves[i].S});
-            // if (!stat.valid){
-            //     undo(selectedPiece, {selectY + moves[i].F, selectX + moves[i].S}, stat.piece);
-            //     continue;
-            // }
-            display[selectY + moves[i].F][selectX + moves[i].S]->rect.setFillColor(Consts::possibleToMove);
+            stats stat = move(selectedPiece, {selectY + moves[i].F, selectX + moves[i].S});
+            if (stat.valid){
+                display[selectY + moves[i].F][selectX + moves[i].S]->rect.setFillColor(Consts::possibleToMove);
+                undo(selectedPiece, {selectY + moves[i].F, selectX + moves[i].S}, stat.piece);
+            }
         }
         display[selectY][selectX]->rect.setFillColor(Consts::selected);
         return;
