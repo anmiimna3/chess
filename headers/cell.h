@@ -11,11 +11,12 @@ enum StateOfCell{
 };
 
 class Cell{
-    RectangleShape rect;
-    Piece* piece;
-    StateOfCell state;
+    public:
+        RectangleShape rect;
+        Piece* piece;
+        StateOfCell state;
 
-    void setColor(Color x);
+        void setColor(Color x);
 };
 
 #endif
