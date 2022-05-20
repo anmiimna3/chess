@@ -511,7 +511,7 @@ void Board::run(){
                 mouseClicked(Mouse::getPosition(*window));
             }
         }
-        window->clear(Color::Cyan);
+        window->clear(Color(120, 120, 120));
         draw();
         window->display();
     }
@@ -522,7 +522,7 @@ void Board::draw(){
         for (int j = 0; j < 8; j++){
             window->draw(display[i][j]->rect);
             if (board[i][j]->getName() != "-"){
-                window->draw(display[i][j]->piece->getSprite());
+                window->draw(board[i][j]->getSprite());
             }
         }
 }
@@ -548,6 +548,12 @@ void Board::mouseClicked(Vector2i v){
         selected = false;
         Color temp = (selectX + selectY) % 2 == 0 ? Consts::cellColor.F : Consts::cellColor.S;
         display[selectY][selectX]->rect.setFillColor(temp);
+        return;
+    }
+    if (selected && display[selectY][selectX]->rect.getFillColor() == Consts::possibleToMove){
+        resetCellColors();
+        selected = false;
+        move(selectedPiece, {selectY, selectX});
         return;
     }
     
@@ -597,6 +603,6 @@ void Board::resetCellColors(){
 }
 
 Vector2f Board::generateCellPosition(int i, int j){
-    return Vector2f(j * Consts::cellSize, i * Consts::cellSize);
+    return Vector2f(j * Consts::cellSize + (j - 1) * 3, i * Consts::cellSize + (i - 1) * 3);
 }
 

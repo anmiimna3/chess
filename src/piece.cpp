@@ -97,5 +97,5 @@ void Piece::setPosition(pair<int, int> pos){
     }
 
 Vector2f Piece::generateCellPosition(int i, int j){
-    return Vector2f(j * Consts::cellSize, i * Consts::cellSize);
+    return Vector2f(j * Consts::cellSize + (j - 1) * 3, i * Consts::cellSize + (i - 1) * 3);
 }
