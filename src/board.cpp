@@ -529,7 +529,7 @@ void Board::draw(){
 
 void Board::mouseClicked(Vector2i v){
     int selectX = v.x / 100, selectY = v.y / 100;
-    if (selectX > 7 || selectY > 7)
+    if (selectX > 7 || selectY > 7 || selectY < 0 || selectX < 0)
         return;
     cerr << "selected: " << selectX << " " << selectY << endl;
     if (!selected && turn == board[selectY][selectX]->getColor()){
