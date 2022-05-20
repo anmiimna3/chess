@@ -1,11 +1,14 @@
 #include "board.h"
 
 
-Board::Board(){
+Board::Board(RenderWindow* _window){
+    window = _window;
     initialize();
+    setCells();
     turn = "W";
 }
 Board::Board(bool custom){
+    setCells();
     turn = "W";
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++){
@@ -15,6 +18,7 @@ Board::Board(bool custom){
 }
 
 Board::Board(Piece* board[8][8], string turn){
+    setCells();
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
             place(board[i][j], i, j);
@@ -502,14 +506,46 @@ void Board::run(){
             if (event.type == Event::Closed){
                 window->close();
             }
+            if (Mouse::isButtonPressed(Mouse::Left)){
+                cerr << "mouse clicked!\n";
+                mouseClicked(Mouse::getPosition(*window));
+            }
         }
-        window->clear(Color::Black);
+        window->clear(Color::Cyan);
         draw();
         window->display();
     }
 }
 
-void Board::draw(){};
+void Board::draw(){
+    for (int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++){
+            window->draw(display[i][j]->rect);
+            if (board[i][j]->getName() != "-"){
+                window->draw(display[i][j]->piece->getSprite());
+            }
+        }
+}
+
+void Board::mouseClicked(Vector2i v){
+    int selectX = v.x / 100, selectY = v.y / 100;
+    if (selectX > 7 || selectY > 7)
+        return;
+    cerr << "selected: " << selectX << " " << selectY << endl;
+    if (!selected && turn == board[selectY][selectX]->getColor()){
+        selected = true;
+        selectedPiece = {selectY, selectX};
+        display[selectY][selectX]->rect.setFillColor(Consts::selected);
+        return;
+    }
+    if (selected && selectX == selectedPiece.S && selectY == selectedPiece.F){
+        selected = false;
+        Color temp = (selectX + selectY) % 2 == 0 ? Consts::cellColor.F : Consts::cellColor.S;
+        display[selectY][selectX]->rect.setFillColor(temp);
+        return;
+    }
+    
+}
 
 //Initializes the board for the first time
 void Board::initialize(){
@@ -531,5 +567,22 @@ void Board::initialize(){
     King* black = (King*) board[7][4];
     black->whiteKing = (King*) board[0][4];
     black->blackKing = (King*) board[7][4];
+}
+
+void Board::setCells(){
+    for (int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++){
+            Cell* c = new Cell;
+            Color temp = (i + j) % 2 == 0 ? Consts::cellColor.F : Consts::cellColor.S;
+            c->piece = board[i][j];
+            c->rect.setSize(Vector2f(Consts::cellSize, Consts::cellSize));
+            c->rect.setFillColor(temp);
+            c->rect.setPosition(generateCellPosition(i, j));
+            display[i][j] = c;
+        }
+}
+
+Vector2f Board::generateCellPosition(int i, int j){
+    return Vector2f(j * Consts::cellSize, i * Consts::cellSize);
 }
 

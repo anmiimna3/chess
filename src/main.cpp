@@ -15,25 +15,34 @@ void sort(vector<string> &v){
 }
 
 int main(){
-    Board gameBoard = Board(1);
-    string mode;
-    cin >> mode;
-    gameBoard.setTurn(mode[0]);
-    gameBoard.read();
-    if (mode[1] == 'D'){
-        vector<string> v = gameBoard.backtrack0().pos;
-        sort(v);
-        for (auto u: v)
-            cout << u << endl;
-        if (v.size() == 0)
-            cout << "No Answer!";
-    }
-    else{
-        vector<string> v = gameBoard.backtrack1().pos;
-        sort(v);
-        for (auto u: v)
-            cout << u << endl;
-        if (v.size() == 0)
-            cout << "No Answer!";
-    }
+
+    RenderWindow window(VideoMode(800, 800), "chess", Style::Titlebar | Style::Close);
+    window.setFramerateLimit(60);
+    Board board(&window);
+    board.run();
 }
+
+
+
+
+// Board gameBoard = Board(1);
+// string mode;
+// cin >> mode;
+// gameBoard.setTurn(mode[0]);
+// gameBoard.read();
+// if (mode[1] == 'D'){
+//     vector<string> v = gameBoard.backtrack0().pos;
+//     sort(v);
+//     for (auto u: v)
+//         cout << u << endl;
+//     if (v.size() == 0)
+//         cout << "No Answer!";
+// }
+// else{
+//     vector<string> v = gameBoard.backtrack1().pos;
+//     sort(v);
+//     for (auto u: v)
+//         cout << u << endl;
+//     if (v.size() == 0)
+//         cout << "No Answer!";
+// }

@@ -10,7 +10,7 @@
 
 class Board{
     public:
-        Board();
+        Board(RenderWindow* _window);
 
         Board(bool custom);
 
@@ -69,14 +69,22 @@ class Board{
 
         void draw();
 
+        void mouseClicked(Vector2i v);
+
     private:
         Piece* board[8][8];
         Cell* display[8][8];
         string turn;
         RenderWindow *window;
+        pair<int, int> selectedPiece;
+        bool selected;
 
         //Initializes the board for the first time
         void initialize();
+
+        Vector2f generateCellPosition(int i, int j);
+
+        void setCells();
 };
 
 #endif
