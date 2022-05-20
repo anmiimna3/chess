@@ -23,6 +23,9 @@ struct Consts{
     static pair<Color, Color> cellColor;
     static Color selected;
     static Color check;
+    static Color possibleToMove;
+    static Color finallywin;
+    static Color finallyLose;
 };
 
 
