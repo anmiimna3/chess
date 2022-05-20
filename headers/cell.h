@@ -3,9 +3,19 @@
 
 #include "piece.h"
 
-struct Cell{
+enum StateOfCell{
+    MATE,
+    NONE,
+    WIN,
+    LOSE,
+};
+
+class Cell{
     RectangleShape rect;
     Piece* piece;
+    StateOfCell state;
+
+    void setColor(Color x);
 };
 
 #endif
