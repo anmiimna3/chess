@@ -52,7 +52,6 @@ Piece* Board::place(Piece* piece, int x, int y){
     Piece* temp = board[x][y];
     piece->setPosition({x, y});
     board[x][y] = piece;
-    // cout << "placing " << *piece << endl;
     return temp;
 }
 
@@ -183,21 +182,14 @@ movement Board::backtrack3(){
     movement answer;
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++){
-            // cout << "backtrack3() ";
-            // err2(i);
-            // err(j);
             if (board[i][j]->getColor() == turn){
                 Piece *piece = board[i][j];
                 pair<int, int> *moves = piece->moves(board);
-                // cout << "moves of " << *piece << " : " << endl;
                 for (int k = 1; k < moves[0].F + 1; k++){
-                    // cout << moves[k].F << " " << moves[k].S << endl;
                     stats status = move({i, j}, {i + moves[k].F, j + moves[k].S});
                     if (!status.valid)
                         continue;
                     if (status.mate){
-                        // show();
-                        // cout << endl;
                         undo({i, j}, {i + moves[k].F, j + moves[k].S}, status.piece);
                         answer.mate = true;
                         return answer;
@@ -211,13 +203,9 @@ movement Board::backtrack3(){
 }
 
 void Board::undo(pair<int, int> a, pair<int, int> b, Piece *piece){
-    // cout << "BEFORE:\n";
-    // show();
     swap(a, b);
     place(piece, b.F, b.S);
     changeTurn();
-    // cout << "AFTER: \n";
-    // show();
 }
 
 
@@ -226,35 +214,24 @@ void Board::undo(pair<int, int> a, pair<int, int> b, Piece *piece){
 bool Board::Mate(string opponentColor, string turn){
     if (!check(turn))
         return false;
-    // string opponentColor = (turn == "W" ? "B" : "W");
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++){
-            // cout << "position: " << i << " " << j << endl;
             if (board[i][j]->getColor() == opponentColor){
                 Piece* piece = board[i][j];
                 if (!checkAfterMove(piece, i, j, opponentColor, turn))
                     return false;
             }
         }
-    // show();
-    // err2(opponentColor);
-    // err(turn);
-    // cout << endl;
     return true;
 }
 
 bool Board::checkAfterMove(Piece* piece, int p, int q, string opponentColor, string turn){
     pair<int, int>* moves = piece->moves(board);
-    // cout << "moves of " << *piece << " in " << piece->getPosition().F << ", " << piece->getPosition().S << ": " << endl;
     for (int i = 1; i < moves[0].F + 1; i++){
-        // cout << moves[i].F << " " << moves[i].S << endl;
         if (board[p + moves[i].F][q + moves[i].S]->getColor() == opponentColor)
             continue;
         if (board[p + moves[i].F][q + moves[i].S]->getColor() == "-"){
             swap({p, q}, {p + moves[i].F, q + moves[i].S});
-            // cout << '\n';
-            // show();
-            // cout << '\n';
             if (!check(turn)){
                 swap({p, q}, {p + moves[i].F, q + moves[i].S});
                 return false;
@@ -262,15 +239,10 @@ bool Board::checkAfterMove(Piece* piece, int p, int q, string opponentColor, str
             swap({p, q}, {p + moves[i].F, q + moves[i].S});
         }
         else{
-            // cout << "\n" << turn << board[p + moves[i].F][q + moves[i].S]->getName() << " " << opponentColor << "\n";
             if (!(piece->validTake(moves[i].F, moves[i].S))){
-                // cout << "\n" << moves[i].F << " " << moves[i].S << "\n";
                 continue;
             }
             Piece* temp = take({p, q}, {p + moves[i].F, q + moves[i].S});
-            // cout << '\n';
-            // show();
-            // cout << '\n';
             if (!check(turn)){
                 swap({p, q}, {p + moves[i].F, q + moves[i].S});
                 place(temp, p + moves[i].F, q + moves[i].S);
@@ -288,8 +260,6 @@ bool Board::checkAfterMove(Piece* piece, int p, int q, string opponentColor, str
 //takes one argument the color of the player who made move for check. it's either "W" or "B"
 bool Board::check(string turn){
     string opponentColor = (turn == "W" ? "B" : "W");
-    // err2(turn);
-    // err(opponentColor);
     bool found = false;
     int p, q;
     for (int i = 0; i < 8; i++){
@@ -306,16 +276,12 @@ bool Board::check(string turn){
         if (p + 1 < 8 && q + 1 < 8){
             string temp1 = board[p + 1][q + 1]->getName() + board[p + 1][q + 1]->getColor();
             if (temp1 == "PB"){
-                // show();
-                // cout << "PB\n";
                 return true;
             }
         }
         if (p + 1 < 8 && q - 1 > -1){
             string temp2 = board[p + 1][q - 1]->getName() + board[p + 1][q - 1]->getColor();
             if (temp2 == "PB"){
-                // show();
-                // cout << "PB\n";
                 return true;
             }
         }
@@ -324,16 +290,12 @@ bool Board::check(string turn){
         if (p - 1 > -1 && q + 1 < 8){
             string temp1 = board[p - 1][q + 1]->getName() + board[p - 1][q + 1]->getColor();
             if (temp1 == "PW"){
-                // show();
-                // cout << "PW\n";
                 return true;
             }
         }
         if (p - 1 > -1 && q - 1 > -1){
             string temp2 = board[p - 1][q - 1]->getName() + board[p - 1][q - 1]->getColor();
             if (temp2 == "PW"){
-                // show();
-                // cout << "PW\n";
                 return true;
             }
         }
@@ -346,8 +308,6 @@ bool Board::check(string turn){
             if (p + i > 7 || p + i < 0 || q + j > 7 || q + j < 0)
                 continue;
             if (board[p + i][q + j]->getName() == "N" && board[p + i][q + j]->getColor() == turn){
-                // show();
-                // cout << "N\n";
                 return true;
             }
         }
@@ -372,8 +332,6 @@ bool Board::straightcheck(int p, int q,int a, int b, string pieces[], int size, 
                     tempName = board[p + i * a][q + i * b]->getName();
                     for (int cnt = 0; cnt < size; cnt++)
                         if (tempName == pieces[cnt]){
-                            // show();
-                            // cout << tempName + board[p + i * a][q + i * b]->getColor() << endl;
                             return true;
                         }
                 }
@@ -402,8 +360,6 @@ stats Board::move(pair<int, int> a, pair<int, int> b){
                 ans.full = true;
                 return ans;
             }
-            // cout << "BEFORE: \n";
-            // show();
             ans.valid = true;
             if (Mate(turn, getOpponentColor())){
                 ans.mate = true;
@@ -427,8 +383,6 @@ stats Board::move(pair<int, int> a, pair<int, int> b){
             ans.full = true;
             return ans;
         }
-        // cout << "BEFORE: \n";
-        // show();
         ans.valid = true;
         if (Mate(turn, getOpponentColor())){
             ans.mate = true;
@@ -532,12 +486,17 @@ void Board::mouseClicked(Vector2i v){
     if (selectX > 7 || selectY > 7 || selectY < 0 || selectX < 0)
         return;
     cerr << "selected: " << selectX << " " << selectY << endl;
-    if (!selected && turn == board[selectY][selectX]->getColor()){
+    if (turn == board[selectY][selectX]->getColor()){
         resetCellColors();
         selected = true;
         selectedPiece = {selectY, selectX};
         pair<int, int> *moves = board[selectY][selectX]->moves(board);
         for (int i = 1; i < moves[0].F + 1; i++){
+            // stats stat = move(selectedPiece, {selectY + moves[i].F, selectX + moves[i].S});
+            // if (!stat.valid){
+            //     undo(selectedPiece, {selectY + moves[i].F, selectX + moves[i].S}, stat.piece);
+            //     continue;
+            // }
             display[selectY + moves[i].F][selectX + moves[i].S]->rect.setFillColor(Consts::possibleToMove);
         }
         display[selectY][selectX]->rect.setFillColor(Consts::selected);
