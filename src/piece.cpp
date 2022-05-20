@@ -1,15 +1,24 @@
 #include "piece.h"
+#include "templates.h"
+
+
+map<string, Texture*> save;
 
 Piece::~Piece(){}
 
-Piece::Piece(): Name("-"), Color("-"){}
+Piece::Piece(): Name("-"), Color("-"){
+    loadTexture();
+}
 
 Piece::Piece(string color, string name)
-    :Name(name), Color(color){}
+    :Name(name), Color(color){
+        loadTexture();        
+    }
 
 Piece::Piece(int i, int j, string color, string name)
     : Name(name), Color(color){
         Position = {i, j};
+        loadTexture();
     }
 
 bool Piece::liniar(bool found[4], int index, int x, int y, int i, int j, Piece* board[8][8]){
@@ -45,6 +54,23 @@ bool Piece::validPosition(int i, int j){
         return true;
     }
     
+void Piece::loadTexture(){
+    if (Name == "-")
+        return;
+    if (save.find(getTitle()) == save.end()){
+        Texture* texture = new Texture;
+        if (!texture->loadFromFile("./resources/images/" + getTitle() + ".png"))
+            cerr << "error\n";
+        texture->setSmooth(true);
+        save.insert({getTitle(), texture});
+    }
+    sprite.setTexture(*save.at(getTitle()));
+    sprite.setPosition(generateCellPosition(Position.F, Position.S));
+    float pieceScaleX = (float) Consts::cellSize / sprite.getTexture()->getSize().x;
+    float pieceScaleY = (float) Consts::cellSize / sprite.getTexture()->getSize().y;
+    sprite.setScale(pieceScaleX, pieceScaleY);
+}
+
 pair<int, int> Piece::getPosition(){
         return Position;
     }
@@ -61,6 +87,15 @@ string Piece::getName(){
         return Name;
     }
 
+Sprite Piece::getSprite(){
+    return sprite;
+}
+
 void Piece::setPosition(pair<int, int> pos){
         Position = pos;
+        sprite.setPosition(generateCellPosition(Position.F, Position.S));
     }
+
+Vector2f Piece::generateCellPosition(int i, int j){
+    return Vector2f(j * Consts::cellSize, i * Consts::cellSize);
+}

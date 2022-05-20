@@ -29,6 +29,8 @@ class Piece{
 
         virtual pair<int, int>* moves(Piece* board[8][8]);
 
+        void loadTexture();
+
         //checks if the move is valid for taking for a specific piece
         //also checks if the move isn't out of bounds for the 8x8 board
         virtual bool validTake(int i, int j);
@@ -48,11 +50,16 @@ class Piece{
 
         string getName();
 
+        Sprite getSprite();
+
+        Vector2f generateCellPosition(int i, int j);
+
         virtual void setPosition(pair<int, int> pos);
     private:
         const string Color;
         const string Name;
         pair<int, int> Position;
+        Sprite sprite;
 };
 
 #endif
