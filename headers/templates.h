@@ -18,6 +18,14 @@ struct movement{
     bool mate;
 };
 
+struct Consts{
+    static int cellSize;
+    static pair<Color, Color> cellColor;
+    static Color selected;
+    static Color check;
+};
+
+
 class Costume{
     public:
         virtual ~Costume();
