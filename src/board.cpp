@@ -486,6 +486,13 @@ void Board::mouseClicked(Vector2i v){
     if (selectX > 7 || selectY > 7 || selectY < 0 || selectX < 0)
         return;
     cerr << "selected: " << selectX << " " << selectY << endl;
+    if (selected && selectX == selectedPiece.S && selectY == selectedPiece.F){
+        resetCellColors();
+        selected = false;
+        Color temp = (selectX + selectY) % 2 == 0 ? Consts::cellColor.F : Consts::cellColor.S;
+        display[selectY][selectX]->rect.setFillColor(temp);
+        return;
+    }
     if (turn == board[selectY][selectX]->getColor()){
         resetCellColors();
         selected = true;
@@ -499,13 +506,6 @@ void Board::mouseClicked(Vector2i v){
             }
         }
         display[selectY][selectX]->rect.setFillColor(Consts::selected);
-        return;
-    }
-    if (selected && selectX == selectedPiece.S && selectY == selectedPiece.F){
-        resetCellColors();
-        selected = false;
-        Color temp = (selectX + selectY) % 2 == 0 ? Consts::cellColor.F : Consts::cellColor.S;
-        display[selectY][selectX]->rect.setFillColor(temp);
         return;
     }
     if (selected && display[selectY][selectX]->rect.getFillColor() == Consts::possibleToMove){
