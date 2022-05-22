@@ -14,7 +14,7 @@ struct stats{
 };
 
 struct movement{
-    vector<string> pos;
+    vector<pair<int, int>> pos;
     bool mate;
 };
 

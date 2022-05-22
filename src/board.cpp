@@ -3,6 +3,8 @@
 
 Board::Board(RenderWindow* _window){
     window = _window;
+    checkedCell = {-1, -1};
+    ended = false;
     initialize();
     setCells();
     turn = "W";
@@ -62,88 +64,42 @@ Piece* Board::take(pair<int, int> a, pair<int, int> b){
     return piece;
 }
 
-movement Board::backtrack0(){
+movement Board::backtrack0(int i, int j){
     movement answer;
-    for (int j = 0; j < 8; j++)
-        for (int i = 0; i < 8; i++){
-            if (board[i][j]->getColor() == turn){
-                Piece* piece = board[i][j];
-                pair<int, int> *moves = piece->moves(board);
-                vector<string> temp;
-                bool full = 0;
-                if (moves[0].F != 0)
-                    full = 1;
-                for (int k = 1; k < moves[0].F + 1; k++){
-                    stats status = move({i, j}, {i + moves[k].F, j + moves[k].S});
-                    if (!status.valid){
-                        if (status.full)
-                            full = 0;
-                        continue;
-                    }
-                    if (status.mate || backtrack1().pos.size() != 0)
-                        temp.PB(Translate::toString({i, j}, {i + moves[k].F, j + moves[k].S}, piece->getTitle()));
-                    else{
-                        full = 0;
-                    }
-                    undo({i, j}, {i + moves[k].F, j + moves[k].S}, status.piece);
+    if (board[i][j]->getColor() == turn){
+        Piece* piece = board[i][j];
+        pair<int, int> *moves = piece->moves(board);
+        for (int k = 1; k < moves[0].F + 1; k++){
+            stats status = move({i, j}, {i + moves[k].F, j + moves[k].S});
+            if (!status.valid)
+                continue;
+            for (int ii = 0; ii < 8; ii++)
+                for (int jj = 0; jj < 8; jj++){
+                    if (status.mate || backtrack1(ii, jj).pos.size() != 0)
+                        answer.pos.PB({i + moves[k].F, j + moves[k].S});
+                        // temp.PB(Translate::toString({i, j}, {i + moves[k].F, j + moves[k].S}, piece->getTitle()));
                 }
-                if (full){
-                    string f = "";
-                    string s = Translate::toString({i, j}, {0, 0}, piece->getTitle());
-                    for (int i = 0; i < 4; i++)
-                        f += s[i];
-                    answer.pos.PB(f);
-                }
-                else{
-                    for (auto s: temp)
-                        answer.pos.PB(s);
-                    temp.clear();
-                }
-            }
+            undo({i, j}, {i + moves[k].F, j + moves[k].S}, status.piece);
         }
+    }
     return answer;
 }
 
 
-movement Board::backtrack1(){
+movement Board::backtrack1(int i, int j){
     movement answer;
-    for (int j = 0; j < 8; j++)
-        for (int i = 0; i < 8; i++){
-            if (board[i][j]->getColor() == turn){
-                Piece *piece = board[i][j];
-                pair<int, int> *moves = piece->moves(board);
-                vector<string> temp;
-                bool full = 0;
-                if (moves[0].F != 0)
-                    full = 1;
-                for (int k = 1; k < moves[0].F + 1; k++){
-                    stats status = move({i, j}, {i + moves[k].F, j + moves[k].S});
-                    if (!status.valid){
-                        if (status.full)
-                            full = 0;
-                        continue;
-                    }
-                    if (status.mate || backtrack2().mate)
-                        temp.PB(Translate::toString({i, j}, {i + moves[k].F, j + moves[k].S}, piece->getTitle()));
-                    else{
-                        full = 0;
-                    }
-                    undo({i, j}, {i + moves[k].F, j + moves[k].S}, status.piece);
-                }
-                if (full){
-                    string f = "";
-                    string s = Translate::toString({i, j}, {0, 0}, piece->getTitle());
-                    for (int i = 0; i < 4; i++)
-                        f += s[i];
-                    answer.pos.PB(f);
-                }
-                else{
-                    for (auto s: temp)
-                        answer.pos.PB(s);
-                    temp.clear();
-                }
-            }
+    if (board[i][j]->getColor() == turn){
+        Piece *piece = board[i][j];
+        pair<int, int> *moves = piece->moves(board);
+        for (int k = 1; k < moves[0].F + 1; k++){
+            stats status = move({i, j}, {i + moves[k].F, j + moves[k].S});
+            if (!status.valid)
+                continue;
+            if (status.mate || backtrack2().mate)
+                answer.pos.PB({i + moves[k].F, j + moves[k].S});
+            undo({i, j}, {i + moves[k].F, j + moves[k].S}, status.piece);
         }
+    }
     return answer;
 }
 
@@ -461,7 +417,7 @@ void Board::run(){
                 window->close();
             }
             if (Mouse::isButtonPressed(Mouse::Left)){
-                cerr << "mouse clicked!\n";
+                // cerr << "mouse clicked!\n";
                 mouseClicked(Mouse::getPosition(*window));
             }
         }
@@ -485,7 +441,7 @@ void Board::mouseClicked(Vector2i v){
     int selectX = v.x / 103, selectY = v.y / 103;
     if (selectX > 7 || selectY > 7 || selectY < 0 || selectX < 0)
         return;
-    cerr << "selected: " << selectX << " " << selectY << endl;
+    // cerr << "selected: " << selectX << " " << selectY << endl;
     if (selected && selectX == selectedPiece.S && selectY == selectedPiece.F){
         resetCellColors();
         selected = false;
@@ -505,13 +461,32 @@ void Board::mouseClicked(Vector2i v){
                 undo(selectedPiece, {selectY + moves[i].F, selectX + moves[i].S}, stat.piece);
             }
         }
+        movement a = backtrack0(selectY, selectX);
+        for (auto v: a.pos)
+            display[v.F][v.S]->rect.setFillColor(Consts::finallyLose);
         display[selectY][selectX]->rect.setFillColor(Consts::selected);
+        movement b = backtrack1(selectY, selectX);
+        for (auto v: b.pos)
+            display[v.F][v.S]->rect.setFillColor(Consts::finallywin);
         return;
     }
-    if (selected && display[selectY][selectX]->rect.getFillColor() == Consts::possibleToMove){
+    Color c = display[selectY][selectX]->rect.getFillColor();
+    if (selected && (c == Consts::possibleToMove || c == Consts::finallyLose || c == Consts::finallywin)){
+        checkedCell = {-1, -1};
         resetCellColors();
         selected = false;
         move(selectedPiece, {selectY, selectX});
+        if (Mate(turn, getOpponentColor()))
+            ended = true;
+        if (check(getOpponentColor())){
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    if (board[i][j]->getTitle() == "K" + turn){
+                        display[i][j]->rect.setFillColor(Consts::check);
+                        checkedCell = {i, j};
+                        return;
+                    }
+        }
         return;
     }
     
@@ -558,6 +533,8 @@ void Board::resetCellColors(){
             Color temp = (i + j) % 2 == 0 ? Consts::cellColor.F : Consts::cellColor.S;
             display[i][j]->rect.setFillColor(temp);
         }
+    if (checkedCell.F != -1)
+        display[checkedCell.F][checkedCell.S]->rect.setFillColor(Consts::check);
 }
 
 Vector2f Board::generateCellPosition(int i, int j){

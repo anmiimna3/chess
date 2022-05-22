@@ -28,9 +28,9 @@ class Board{
 
         Piece* take(pair<int, int> a, pair<int, int> b);
 
-        movement backtrack0();
+        movement backtrack0(int, int);
 
-        movement backtrack1();
+        movement backtrack1(int, int);
 
         movement backtrack2();
 
@@ -80,6 +80,8 @@ class Board{
         RenderWindow *window;
         pair<int, int> selectedPiece;
         bool selected;
+        pair<int, int> checkedCell;
+        bool ended;
 
         //Initializes the board for the first time
         void initialize();
