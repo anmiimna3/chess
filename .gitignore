@@ -1,3 +1,4 @@
 .vscode
 all.cpp
-./CMakeFiles/
+./CMakeFiles
+./CMakeFiles/chess.dir
