@@ -441,12 +441,9 @@ void Board::mouseClicked(Vector2i v){
     int selectX = v.x / 103, selectY = v.y / 103;
     if (selectX > 7 || selectY > 7 || selectY < 0 || selectX < 0)
         return;
-    // cerr << "selected: " << selectX << " " << selectY << endl;
     if (selected && selectX == selectedPiece.S && selectY == selectedPiece.F){
         resetCellColors();
         selected = false;
-        Color temp = (selectX + selectY) % 2 == 0 ? Consts::cellColor.F : Consts::cellColor.S;
-        display[selectY][selectX]->rect.setFillColor(temp);
         return;
     }
     if (turn == board[selectY][selectX]->getColor()){
