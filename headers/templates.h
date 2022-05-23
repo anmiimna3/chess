@@ -53,7 +53,7 @@ class Costume{
         template <typename T>
         static Piece* placing(Board* board, int i, int j, string color){
             T* t = new T(color);
-            board->place(t, i, j);
+            board->place((Piece*) t, i, j);
             return t;
         }
 };

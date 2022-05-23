@@ -82,6 +82,8 @@ class Board{
         bool selected;
         pair<int, int> checkedCell;
         bool ended;
+        Text status;
+        Font font;
 
         //Initializes the board for the first time
         void initialize();
@@ -89,6 +91,10 @@ class Board{
         Vector2f generateCellPosition(int i, int j);
 
         void setCells();
+
+        void initText();
+
+        void setText();
 };
 
 #endif

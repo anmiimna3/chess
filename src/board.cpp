@@ -5,8 +5,10 @@ Board::Board(RenderWindow* _window){
     window = _window;
     checkedCell = {-1, -1};
     ended = false;
-    initialize();
+    // read();
+    // initialize();
     setCells();
+    initText();
     turn = "W";
 }
 Board::Board(bool custom){
@@ -399,6 +401,10 @@ void Board::read(){
                         black = (King*) tmp;
                 }
             }
+            else{
+                Null* n = new Null();
+                place((Piece*) n, i, j);
+            }
         }
     }
     white->whiteKing = white;
@@ -409,6 +415,7 @@ void Board::read(){
 
 void Board::run(){
     initialize();
+    // read();
     window->display();
     while(window->isOpen()){
         Event event;
@@ -422,6 +429,8 @@ void Board::run(){
             }
         }
         window->clear(Color(120, 120, 120));
+        setText();
+        window->draw(status);
         draw();
         window->display();
     }
@@ -538,3 +547,17 @@ Vector2f Board::generateCellPosition(int i, int j){
     return Vector2f(j * Consts::cellSize + (j - 1) * 3, i * Consts::cellSize + (i - 1) * 3);
 }
 
+
+void Board::initText(){
+    font.loadFromFile("./resources/fonts/Courier10PitchRegular.otf");
+    status.setFont(font);
+    status.setCharacterSize(21);
+    status.setColor(Color::Black);
+    status.setPosition(820, 200);
+    status.setStyle(Text::Bold);
+}
+
+void Board::setText(){
+    string s = (turn == "W" ? "White" : "Black");
+    status.setString(s + "'s turn!");
+}
