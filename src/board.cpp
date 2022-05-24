@@ -480,6 +480,8 @@ void Board::defineButton(){
 }
 
 void Board::mouseClicked(Vector2i v){
+    if (v.x < 0 || v.y < 0)
+        return;
     if (v.x > 830 && v.x < 990 && v.y > 500 && v.y < 560){
         string temp;
         cin >> temp;
