@@ -82,8 +82,9 @@ class Board{
         bool selected;
         pair<int, int> checkedCell;
         bool ended;
-        Text status;
+        Text status, readButtonText, resetButtonText;
         Font font;
+        RectangleShape resetButton, readButton;
 
         //Initializes the board for the first time
         void initialize();
@@ -95,6 +96,10 @@ class Board{
         void initText();
 
         void setText();
+
+        void defineButton();
+
+        void drawText();
 };
 
 #endif

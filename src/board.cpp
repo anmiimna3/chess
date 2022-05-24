@@ -7,6 +7,7 @@ Board::Board(RenderWindow* _window){
     ended = false;
     // read();
     // initialize();
+    defineButton();
     setCells();
     initText();
     turn = "W";
@@ -375,10 +376,11 @@ string Board::getOpponentColor(){
 
 void Board::read(){
     string temp;
-    Piece *tmp;
+    Piece *tmp, *ex;
     King *white, *black;
     for (int i = 7; i > -1; i--){
         for (int j = 0; j < 8; j++){
+            ex = board[i][j];
             cin >> temp;
             if (temp != "--"){
                 string pieceColor = "";
@@ -405,6 +407,7 @@ void Board::read(){
                 Null* n = new Null();
                 place((Piece*) n, i, j);
             }
+            delete ex;
         }
     }
     white->whiteKing = white;
@@ -415,7 +418,6 @@ void Board::read(){
 
 void Board::run(){
     initialize();
-    // read();
     window->display();
     while(window->isOpen()){
         Event event;
@@ -428,13 +430,23 @@ void Board::run(){
                 mouseClicked(Mouse::getPosition(*window));
             }
         }
+
         window->clear(Color(120, 120, 120));
         setText();
-        window->draw(status);
         draw();
+        drawText();
         window->display();
     }
 }
+
+void Board::drawText(){
+    window->draw(status);
+    window->draw(resetButton);
+    window->draw(readButton);
+    window->draw(resetButtonText);
+    window->draw(readButtonText);
+}
+
 
 void Board::draw(){
     for (int i = 0; i < 8; i++)
@@ -446,7 +458,42 @@ void Board::draw(){
         }
 }
 
+void Board::defineButton(){
+    resetButton.setSize(Vector2f(160, 60));
+    readButton.setSize(Vector2f(160, 60));
+    readButton.setPosition(Vector2f(830, 500));
+    resetButton.setPosition(Vector2f(830, 600));
+    resetButton.setFillColor(Color::Green);
+    readButton.setFillColor(Color::Green);
+    readButtonText.setFont(font);
+    resetButtonText.setFont(font);
+    readButtonText.setCharacterSize(30);
+    resetButtonText.setCharacterSize(30);
+    readButtonText.setPosition(Vector2f(870, 510));
+    resetButtonText.setPosition(Vector2f(860, 610));
+    readButtonText.setColor(Color::Black);
+    resetButtonText.setColor(Color::Black);
+    resetButtonText.setString("reset");
+    readButtonText.setString("read");
+    readButtonText.setStyle(Text::Bold | Text::Italic);
+    resetButtonText.setStyle(Text::Bold | Text::Italic);
+}
+
 void Board::mouseClicked(Vector2i v){
+    if (v.x > 830 && v.x < 990 && v.y > 500 && v.y < 560){
+        string temp;
+        cin >> temp;
+        turn = temp == "W" ? "W" : "B";
+        read();
+        return;
+    }
+    if (v.x > 830 && v.x < 990 && v.y > 600 && v.y < 660){
+        initialize();
+        turn = "W";
+        return;
+    }
+    if (ended)
+        return;
     int selectX = v.x / 103, selectY = v.y / 103;
     if (selectX > 7 || selectY > 7 || selectY < 0 || selectX < 0)
         return;
@@ -553,11 +600,19 @@ void Board::initText(){
     status.setFont(font);
     status.setCharacterSize(21);
     status.setColor(Color::Black);
-    status.setPosition(820, 200);
-    status.setStyle(Text::Bold);
+    status.setStyle(Text::Bold | Text::Italic);
 }
 
 void Board::setText(){
+    if (ended){
+        status.setPosition(840, 200);
+        if (Mate("W", "B"))
+            status.setString("Black won!");
+        if (Mate("B", "W"))
+            status.setString("White won!");
+        return;
+    }
+    status.setPosition(820, 200);
     string s = (turn == "W" ? "White" : "Black");
     status.setString(s + "'s turn!");
 }
