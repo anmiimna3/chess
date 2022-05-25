@@ -505,6 +505,8 @@ void Board::mouseClicked(Vector2i v){
     int selectX = v.x / 103, selectY = v.y / 103;
     if (selectX > 7 || selectY > 7 || selectY < 0 || selectX < 0)
         return;
+    selectY = 7 - selectY;
+    cout << selectY << " " << selectX << endl;
     if (selected && selectX == selectedPiece.S && selectY == selectedPiece.F){
         resetCellColors();
         selected = false;
@@ -608,6 +610,7 @@ void Board::resetCellColors(){
 }
 
 Vector2f Board::generateCellPosition(int i, int j){
+    i = 7 - i;
     return Vector2f(j * Consts::cellSize + (j - 1) * 3, i * Consts::cellSize + (i - 1) * 3);
 }
 

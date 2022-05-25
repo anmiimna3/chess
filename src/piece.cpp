@@ -11,48 +11,48 @@ Piece::Piece(): Name("-"), Color("-"){
 }
 
 Piece::Piece(string color, string name)
-    :Name(name), Color(color){
-        loadTexture();        
-    }
+:Name(name), Color(color){
+    loadTexture();        
+}
 
 Piece::Piece(int i, int j, string color, string name)
-    : Name(name), Color(color){
-        Position = {i, j};
-        loadTexture();
-    }
+: Name(name), Color(color){
+    Position = {i, j};
+    loadTexture();
+}
 
 bool Piece::liniar(bool found[4], int index, int x, int y, int i, int j, Piece* board[8][8]){
-        if (found[index]){
-            return false;
-        }
-        if (!validPosition(i, j)){
-            found[index] = 1;
-            return false;
-        }
-        string name = board[x + i][y + j]->getColor();
-        if (name == Color){
-            found[index] = 1;
-            return false;
-        }
-        if (name != "-")
-            found[index] = 1;
-        return true;
+    if (found[index]){
+        return false;
     }
+    if (!validPosition(i, j)){
+        found[index] = 1;
+        return false;
+    }
+    string name = board[x + i][y + j]->getColor();
+    if (name == Color){
+        found[index] = 1;
+        return false;
+    }
+    if (name != "-")
+        found[index] = 1;
+    return true;
+}
 
 pair<int, int>* Piece::moves(Piece* board[8][8]){}
 
 bool Piece::validTake(int i, int j){
-        return validMove(i, j);
-    }
+    return validMove(i, j);
+}
 
 bool Piece::validMove(int i, int j){}
 
 bool Piece::validPosition(int i, int j){
-        int tempI = i + getPosition().F, tempJ = j + getPosition().S;
-        if (tempI > 7 || tempI < 0 || tempJ > 7 || tempJ < 0)
-            return false;
-        return true;
-    }
+    int tempI = i + getPosition().F, tempJ = j + getPosition().S;
+    if (tempI > 7 || tempI < 0 || tempJ > 7 || tempJ < 0)
+        return false;
+    return true;
+}
     
 void Piece::loadTexture(){
     if (Name == "-")
@@ -72,29 +72,29 @@ void Piece::loadTexture(){
 }
 
 pair<int, int> Piece::getPosition(){
-        return Position;
-    }
+    return Position;
+}
 
 string Piece::getTitle(){
-        return Name + Color; 
-    }
+    return Name + Color; 
+}
 
 string Piece::getColor(){
-        return Color;
-    }
+    return Color;
+}
 
 string Piece::getName(){
-        return Name;
-    }
+    return Name;
+}
 
 Sprite Piece::getSprite(){
     return sprite;
 }
 
 void Piece::setPosition(pair<int, int> pos){
-        Position = pos;
-        sprite.setPosition(generateCellPosition(Position.F, Position.S));
-    }
+    Position = pos;
+    sprite.setPosition(generateCellPosition(7 - Position.F, Position.S));
+}
 
 Vector2f Piece::generateCellPosition(int i, int j){
     return Vector2f(j * Consts::cellSize + (j - 1) * 3, i * Consts::cellSize + (i - 1) * 3);
