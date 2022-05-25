@@ -1,5 +1,5 @@
 #include "board.h"
-
+#include "SFML/Audio.hpp"
 
 Board::Board(RenderWindow* _window){
     window = _window;
@@ -7,6 +7,7 @@ Board::Board(RenderWindow* _window){
     ended = false;
     // read();
     // initialize();
+    loadSound();
     defineButton();
     setCells();
     initText();
@@ -479,6 +480,12 @@ void Board::defineButton(){
     resetButtonText.setStyle(Text::Bold | Text::Italic);
 }
 
+void delay_ms(int ms)
+{
+    sf::Clock Timer;
+    while (Timer.getElapsedTime().asMilliseconds()<ms);
+}
+
 void Board::mouseClicked(Vector2i v){
     if (v.x < 0 || v.y < 0)
         return;
@@ -490,6 +497,10 @@ void Board::mouseClicked(Vector2i v){
         return;
     }
     if (v.x > 830 && v.x < 990 && v.y > 600 && v.y < 660){
+        checkedCell = {-1, -1};
+        ended = false;
+        selected = false;
+        resetCellColors();
         initialize();
         turn = "W";
         return;
@@ -531,6 +542,7 @@ void Board::mouseClicked(Vector2i v){
         resetCellColors();
         selected = false;
         move(selectedPiece, {selectY, selectX});
+        sound.play();
         if (Mate(turn, getOpponentColor()))
             ended = true;
         if (check(getOpponentColor())){
@@ -542,6 +554,7 @@ void Board::mouseClicked(Vector2i v){
                         return;
                     }
         }
+        // delay_ms(00);
         return;
     }
     
@@ -617,4 +630,9 @@ void Board::setText(){
     status.setPosition(820, 200);
     string s = (turn == "W" ? "White" : "Black");
     status.setString(s + "'s turn!");
+}
+
+void Board::loadSound(){
+    buffer.loadFromFile("./resources/audios/move.ogg");
+    sound.setBuffer(buffer);
 }
