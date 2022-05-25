@@ -537,10 +537,17 @@ void Board::mouseClicked(Vector2i v){
         resetCellColors();
         selected = false;
         animate(selectedPiece, {selectY, selectX});
-        move(selectedPiece, {selectY, selectX});
+        stats stat = move(selectedPiece, {selectY, selectX});
+        singleMove temp;
+        temp.start = selectedPiece;
+        temp.finish = {selectY, selectX};
+        temp.piece = stat.piece;
+        allMoves.PB(temp);
         sound[0].play();
-        if (Mate(turn, getOpponentColor()))
+        if (Mate(turn, getOpponentColor())){
+            sound[1].play();
             ended = true;
+        }
         if (check(getOpponentColor())){
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
@@ -628,8 +635,10 @@ void Board::setText(){
 }
 
 void Board::loadSound(){
+    buffer[1].loadFromFile("./resources/audios/mate.ogg");
     buffer[0].loadFromFile("./resources/audios/move.ogg");
     sound[0].setBuffer(buffer[0]);
+    sound[1].setBuffer(buffer[1]);
 }
 
 

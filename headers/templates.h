@@ -29,6 +29,13 @@ struct Consts{
 };
 
 
+struct singleMove{
+    pair<int, int> start;
+    pair<int, int> finish;
+    Piece* piece;
+};
+
+
 class Costume{
     public:
         virtual ~Costume();

@@ -5,6 +5,7 @@
 #include "includes.h"
 #include "templates.h"
 #include "translate.h"
+#include <vector>
 
 
 
@@ -87,6 +88,7 @@ class Board{
         RectangleShape resetButton, readButton;
         SoundBuffer buffer[5];
         Sound sound[5];
+        vector<singleMove> allMoves;
 
         //Initializes the board for the first time
         void initialize();
