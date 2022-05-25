@@ -480,12 +480,6 @@ void Board::defineButton(){
     resetButtonText.setStyle(Text::Bold | Text::Italic);
 }
 
-void delay_ms(int ms)
-{
-    sf::Clock Timer;
-    while (Timer.getElapsedTime().asMilliseconds()<ms);
-}
-
 void Board::mouseClicked(Vector2i v){
     if (v.x < 0 || v.y < 0)
         return;
@@ -542,7 +536,7 @@ void Board::mouseClicked(Vector2i v){
         resetCellColors();
         selected = false;
         move(selectedPiece, {selectY, selectX});
-        sound.play();
+        sound[0].play();
         if (Mate(turn, getOpponentColor()))
             ended = true;
         if (check(getOpponentColor())){
@@ -633,6 +627,6 @@ void Board::setText(){
 }
 
 void Board::loadSound(){
-    buffer.loadFromFile("./resources/audios/move.ogg");
-    sound.setBuffer(buffer);
+    buffer[0].loadFromFile("./resources/audios/move.ogg");
+    sound[0].setBuffer(buffer[0]);
 }
