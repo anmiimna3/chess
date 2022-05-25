@@ -83,12 +83,13 @@ class Board{
         bool selected;
         pair<int, int> checkedCell;
         bool ended;
-        Text status, readButtonText, resetButtonText;
+        Text status, readButtonText, resetButtonText, beforeButtonText, afterButtonText;
         Font font;
-        RectangleShape resetButton, readButton;
+        RectangleShape resetButton, readButton, beforeButton, afterButton;
         SoundBuffer buffer[5];
         Sound sound[5];
         vector<singleMove> allMoves;
+        vector<singleMove> temp;
 
         //Initializes the board for the first time
         void initialize();
@@ -101,13 +102,15 @@ class Board{
 
         void setText();
 
-        void defineButton();
+        void defineButton(RectangleShape*, Text*, Vector2f, Vector2f, Color, Font*, int, Vector2f, Color, string);
 
         void drawText();
 
         void loadSound();
 
         void animate(pair<int, int>, pair<int, int>);
+
+        void createButtons();
 };
 
 #endif

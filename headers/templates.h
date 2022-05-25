@@ -36,6 +36,7 @@ struct singleMove{
     pair<int, int> start;
     pair<int, int> finish;
     Piece* piece;
+    pair<int, int> checkedCell;
 };
 
 

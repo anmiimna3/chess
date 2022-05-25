@@ -6,7 +6,7 @@ Board::Board(RenderWindow* _window){
     checkedCell = {-1, -1};
     ended = false;
     loadSound();
-    defineButton();
+    createButtons();
     setCells();
     initText();
     turn = "W";
@@ -441,8 +441,13 @@ void Board::drawText(){
     window->draw(status);
     window->draw(resetButton);
     window->draw(readButton);
+    window->draw(beforeButton);
+    window->draw(afterButton);
     window->draw(resetButtonText);
     window->draw(readButtonText);
+    window->draw(beforeButtonText);
+    window->draw(afterButtonText);
+
 }
 
 
@@ -464,20 +469,56 @@ void Board::draw(){
 void Board::mouseClicked(Vector2i v){
     if (v.x < 0 || v.y < 0)
         return;
-    if (v.x > 830 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 500 && v.y < 560){
+    if (v.x > 830 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 100 && v.y < 160){
         string temp;
         cin >> temp;
         turn = temp == "W" ? "W" : "B";
+        allMoves.clear();
+        temp.clear();
         read();
         return;
     }
-    if (v.x > 830 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 600 && v.y < 660){
+    if (v.x > 830 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 170 && v.y < 230){
         checkedCell = {-1, -1};
         ended = false;
+        allMoves.clear();
+        temp.clear();
         selected = false;
         resetCellColors();
         initialize();
         turn = "W";
+        return;
+    }
+    if (v.x > 830 + Consts::indexRow && v.x < 890 + Consts::indexRow && v.y > 240 && v.y < 300){
+        if (allMoves.empty())
+            return;
+        undo(allMoves.back().start, allMoves.back().finish, allMoves.back().piece);
+        checkedCell = allMoves.back().checkedCell;
+        resetCellColors();
+        // cout << checkedCell.F << " " << checkedCell.S << endl;
+        temp.PB(allMoves.back());
+        allMoves.pop_back();
+    }
+    if (v.x > 930 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 240 && v.y < 300){
+        if (temp.empty())
+            return;
+        move(temp.back().start, temp.back().finish);
+        allMoves.PB(temp.back());
+        temp.pop_back();
+        sound[0].play();
+        if (Mate(turn, getOpponentColor())){
+            sound[1].play();
+            ended = true;
+        }
+        if (check(getOpponentColor())){
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    if (board[i][j]->getTitle() == "K" + turn){
+                        display[i][j]->rect.setFillColor(Consts::check);
+                        checkedCell = {i, j};
+                        return;
+                    }
+        }
         return;
     }
     if (ended)
@@ -517,16 +558,18 @@ void Board::mouseClicked(Vector2i v){
     }
     Color c = display[selectY][selectX]->rect.getFillColor();
     if (selected && (c == Consts::possibleToMove || c == Consts::finallyLose || c == Consts::finallywin)){
+        singleMove tmp;
+        tmp.checkedCell = checkedCell;
         checkedCell = {-1, -1};
         resetCellColors();
+        temp.clear();
         selected = false;
         animate(selectedPiece, {selectY, selectX});
         stats stat = move(selectedPiece, {selectY, selectX});
-        singleMove temp;
-        temp.start = selectedPiece;
-        temp.finish = {selectY, selectX};
-        temp.piece = stat.piece;
-        allMoves.PB(temp);
+        tmp.start = selectedPiece;
+        tmp.finish = {selectY, selectX};
+        tmp.piece = stat.piece;
+        allMoves.PB(tmp);
         sound[0].play();
         if (Mate(turn, getOpponentColor())){
             sound[1].play();
@@ -602,7 +645,6 @@ void Board::initText(){
     status.setFont(font);
     status.setCharacterSize(21);
     status.setColor(Color::White);
-    // status.setStyle();
 }
 
 void Board::setText(){
@@ -626,25 +668,23 @@ void Board::loadSound(){
     sound[1].setBuffer(buffer[1]);
 }
 
-void Board::defineButton(){
-    resetButton.setSize(Vector2f(160, 60));
-    readButton.setSize(Vector2f(160, 60));
-    readButton.setPosition(Vector2f(830 + Consts::indexRow, 100));
-    resetButton.setPosition(Vector2f(830 + Consts::indexRow, 170));
-    resetButton.setFillColor(Color::Green);
-    readButton.setFillColor(Color::Green);
-    readButtonText.setFont(font);
-    resetButtonText.setFont(font);
-    readButtonText.setCharacterSize(30);
-    resetButtonText.setCharacterSize(30);
-    readButtonText.setPosition(Vector2f(870 + Consts::indexRow, 110));
-    resetButtonText.setPosition(Vector2f(860 + Consts::indexRow, 180));
-    readButtonText.setColor(Color::Black);
-    resetButtonText.setColor(Color::Black);
-    resetButtonText.setString("reset");
-    readButtonText.setString("read");
-    readButtonText.setStyle(Text::Bold | Text::Italic);
-    resetButtonText.setStyle(Text::Bold | Text::Italic);
+void Board::createButtons(){
+    defineButton(&readButton, &readButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 100), Color::Green, &font, 30, Vector2f(870 + Consts::indexRow, 110), Color::Black, "read");
+    defineButton(&resetButton, &resetButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 170), Color::Green, &font, 30, Vector2f(860 + Consts::indexRow, 180), Color::Black, "reset");
+    defineButton(&beforeButton, &beforeButtonText, Vector2f(60, 60), Vector2f(830 + Consts::indexRow, 240), Color::Green, &font, 70, Vector2f(840 + Consts::indexRow, 225), Color::Black, "<");
+    defineButton(&afterButton, &afterButtonText, Vector2f(60, 60), Vector2f(930 + Consts::indexRow, 240), Color::Green, &font, 70, Vector2f(935 + Consts::indexRow, 225), Color::Black, ">");
+}
+
+void Board::defineButton(RectangleShape *rect, Text *text, Vector2f rectSize, Vector2f rectPos, Color rectColor, Font *font, int charSize, Vector2f textPos, Color textColor, string lable){
+    rect->setSize(rectSize);
+    rect->setPosition(rectPos);
+    rect->setFillColor(rectColor);
+    text->setFont(*font);
+    text->setCharacterSize(charSize);
+    text->setPosition(textPos);
+    text->setColor(textColor);
+    text->setString(lable);
+    text->setStyle(Text::Bold);
 }
 
 void Board::animate(pair<int, int> start, pair<int, int> finish){

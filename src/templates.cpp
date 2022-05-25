@@ -7,7 +7,7 @@ Costume::Costume(){};
 int Consts::cellSize = 100;
 int Consts::cellOffset = 3;
 int Consts::indexRow = 40;
-pair<Color, Color> Consts::cellColor = {Color(241, 217, 181), Color(181, 135, 99)};
+pair<Color, Color> Consts::cellColor = {Color(181, 135, 99), Color(241, 217, 181)};
 Color Consts::selected = Color::Cyan;
 Color Consts::check = Color::Red;
 Color Consts::possibleToMove = Color::Cyan;
