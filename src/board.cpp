@@ -432,8 +432,6 @@ void Board::run(){
                 mouseClicked(Mouse::getPosition(*window));
             }
         }
-
-        window->clear(Color(120, 120, 120));
         draw();
         window->display();
     }
@@ -449,6 +447,7 @@ void Board::drawText(){
 
 
 void Board::draw(){
+    window->clear(Color(120, 120, 120));
     setText();
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
@@ -643,8 +642,8 @@ void Board::animate(pair<int, int> start, pair<int, int> finish){
     for (int i = 1; i < 30; i++){
         board[start.F][start.S]->moveSprite(xDiff, yDiff);
         draw();
-        // cerr << "moved a little " << board[start.F][start.S]->getSprite().getPosition().x << " " << board[start.F][start.S]->getSprite().getPosition().y << endl;
+        window->draw(board[start.F][start.S]->getSprite());
         window->display();
-        usleep(10666);
+        usleep(5000);
     }
 }
