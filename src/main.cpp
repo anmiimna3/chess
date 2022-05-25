@@ -16,7 +16,7 @@ void sort(vector<string> &v){
 
 int main(){
 
-    RenderWindow window(VideoMode(1000, 818), "chess", Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode(1000 + Consts::indexRow, 812 + Consts::indexRow), "chess", Style::Titlebar | Style::Close);
     window.setFramerateLimit(60);
     Board board(&window);
     board.run();

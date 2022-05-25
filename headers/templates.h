@@ -20,6 +20,8 @@ struct movement{
 
 struct Consts{
     static int cellSize;
+    static int cellOffset;
+    static int indexRow;
     static pair<Color, Color> cellColor;
     static Color selected;
     static Color check;

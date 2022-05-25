@@ -466,16 +466,16 @@ void Board::draw(){
 void Board::defineButton(){
     resetButton.setSize(Vector2f(160, 60));
     readButton.setSize(Vector2f(160, 60));
-    readButton.setPosition(Vector2f(830, 500));
-    resetButton.setPosition(Vector2f(830, 600));
+    readButton.setPosition(Vector2f(830 + Consts::indexRow, 500));
+    resetButton.setPosition(Vector2f(830 + Consts::indexRow, 600));
     resetButton.setFillColor(Color::Green);
     readButton.setFillColor(Color::Green);
     readButtonText.setFont(font);
     resetButtonText.setFont(font);
     readButtonText.setCharacterSize(30);
     resetButtonText.setCharacterSize(30);
-    readButtonText.setPosition(Vector2f(870, 510));
-    resetButtonText.setPosition(Vector2f(860, 610));
+    readButtonText.setPosition(Vector2f(870 + Consts::indexRow, 510));
+    resetButtonText.setPosition(Vector2f(860 + Consts::indexRow, 610));
     readButtonText.setColor(Color::Black);
     resetButtonText.setColor(Color::Black);
     resetButtonText.setString("reset");
@@ -487,14 +487,14 @@ void Board::defineButton(){
 void Board::mouseClicked(Vector2i v){
     if (v.x < 0 || v.y < 0)
         return;
-    if (v.x > 830 && v.x < 990 && v.y > 500 && v.y < 560){
+    if (v.x > 830 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 500 && v.y < 560){
         string temp;
         cin >> temp;
         turn = temp == "W" ? "W" : "B";
         read();
         return;
     }
-    if (v.x > 830 && v.x < 990 && v.y > 600 && v.y < 660){
+    if (v.x > 830 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 600 && v.y < 660){
         checkedCell = {-1, -1};
         ended = false;
         selected = false;
@@ -505,8 +505,11 @@ void Board::mouseClicked(Vector2i v){
     }
     if (ended)
         return;
+    v.x -= Consts::indexRow;
+    if (v.y < 0 || v.x < 0)
+        return;
     int selectX = v.x / 103, selectY = v.y / 103;
-    if (selectX > 7 || selectY > 7 || selectY < 0 || selectX < 0)
+    if (selectX > 7 || selectY > 7)
         return;
     selectY = 7 - selectY;
     cout << selectY << " " << selectX << endl;
@@ -614,7 +617,7 @@ void Board::resetCellColors(){
 
 Vector2f Board::generateCellPosition(int i, int j){
     i = 7 - i;
-    return Vector2f(j * Consts::cellSize + (j - 1) * 3, i * Consts::cellSize + (i - 1) * 3);
+    return Vector2f(j * Consts::cellSize + (j - 1) * Consts::cellOffset + Consts::indexRow, i * Consts::cellSize + (i - 1) * Consts::cellOffset);
 }
 
 
@@ -628,14 +631,14 @@ void Board::initText(){
 
 void Board::setText(){
     if (ended){
-        status.setPosition(840, 200);
+        status.setPosition(840 + Consts::indexRow, 200);
         if (Mate("W", "B"))
             status.setString("Black won!");
         if (Mate("B", "W"))
             status.setString("White won!");
         return;
     }
-    status.setPosition(820, 200);
+    status.setPosition(820 + Consts::indexRow, 200);
     string s = (turn == "W" ? "White" : "Black");
     status.setString(s + "'s turn!");
 }
@@ -651,14 +654,14 @@ void Board::loadSound(){
 void Board::animate(pair<int, int> start, pair<int, int> finish){
     int xDiff = generateCellPosition(finish.F, finish.S).x - generateCellPosition(start.F, start.S).x;
     int yDiff = generateCellPosition(finish.F, finish.S).y - generateCellPosition(start.F, start.S).y;
-    yDiff /= 30;
-    xDiff /= 30;
+    yDiff /= 20;
+    xDiff /= 20;
     float scale = (float) xDiff / yDiff;
-    for (int i = 1; i < 30; i++){
+    for (int i = 1; i < 20; i++){
         board[start.F][start.S]->moveSprite(xDiff, yDiff);
         draw();
         window->draw(board[start.F][start.S]->getSprite());
         window->display();
-        usleep(5000);
+        // usleep(000);
     }
 }
