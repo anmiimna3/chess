@@ -29,6 +29,7 @@ struct Consts{
     static Color finallywin;
     static Color finallyLose;
     static Color background;
+    static Color buttons;
 };
 
 

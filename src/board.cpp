@@ -669,10 +669,10 @@ void Board::loadSound(){
 }
 
 void Board::createButtons(){
-    defineButton(&readButton, &readButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 100), Color::Green, &font, 30, Vector2f(870 + Consts::indexRow, 110), Color::Black, "read");
-    defineButton(&resetButton, &resetButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 170), Color::Green, &font, 30, Vector2f(860 + Consts::indexRow, 180), Color::Black, "reset");
-    defineButton(&beforeButton, &beforeButtonText, Vector2f(60, 60), Vector2f(830 + Consts::indexRow, 240), Color::Green, &font, 70, Vector2f(840 + Consts::indexRow, 225), Color::Black, "<");
-    defineButton(&afterButton, &afterButtonText, Vector2f(60, 60), Vector2f(930 + Consts::indexRow, 240), Color::Green, &font, 70, Vector2f(935 + Consts::indexRow, 225), Color::Black, ">");
+    defineButton(&readButton, &readButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 100), Consts::buttons, &font, 30, Vector2f(870 + Consts::indexRow, 110), Color::Black, "read");
+    defineButton(&resetButton, &resetButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 170), Consts::buttons, &font, 30, Vector2f(860 + Consts::indexRow, 180), Color::Black, "reset");
+    defineButton(&beforeButton, &beforeButtonText, Vector2f(60, 60), Vector2f(830 + Consts::indexRow, 240), Consts::buttons, &font, 70, Vector2f(840 + Consts::indexRow, 225), Color::Black, "<");
+    defineButton(&afterButton, &afterButtonText, Vector2f(60, 60), Vector2f(930 + Consts::indexRow, 240), Consts::buttons, &font, 70, Vector2f(935 + Consts::indexRow, 225), Color::Black, ">");
 }
 
 void Board::defineButton(RectangleShape *rect, Text *text, Vector2f rectSize, Vector2f rectPos, Color rectColor, Font *font, int charSize, Vector2f textPos, Color textColor, string lable){
