@@ -85,8 +85,8 @@ class Board{
         Text status, readButtonText, resetButtonText;
         Font font;
         RectangleShape resetButton, readButton;
-        SoundBuffer buffer;
-        Sound sound;
+        SoundBuffer buffer[5];
+        Sound sound[5];
 
         //Initializes the board for the first time
         void initialize();
