@@ -427,10 +427,13 @@ void Board::run(){
             if (event.type == Event::Closed){
                 window->close();
             }
-            if (Mouse::isButtonPressed(Mouse::Left)){
-                // cerr << "mouse clicked!\n";
+            bool lock;
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !lock){
+                lock = 1;
                 mouseClicked(Mouse::getPosition(*window));
             }
+            if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && lock)
+                lock = 0;
         }
         draw();
         window->display();
