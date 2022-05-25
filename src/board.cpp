@@ -1,6 +1,5 @@
 #include "board.h"
 #include "SFML/Audio.hpp"
-#include <unistd.h>
 
 Board::Board(RenderWindow* _window){
     window = _window;
@@ -450,7 +449,7 @@ void Board::drawText(){
 
 
 void Board::draw(){
-    window->clear(Color(120, 120, 120));
+    window->clear(Consts::background);
     setText();
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
@@ -657,11 +656,10 @@ void Board::animate(pair<int, int> start, pair<int, int> finish){
     yDiff /= 20;
     xDiff /= 20;
     float scale = (float) xDiff / yDiff;
-    for (int i = 1; i < 20; i++){
+    for (int i = 1; i <= 20; i++){
         board[start.F][start.S]->moveSprite(xDiff, yDiff);
         draw();
         window->draw(board[start.F][start.S]->getSprite());
         window->display();
-        // usleep(000);
     }
 }

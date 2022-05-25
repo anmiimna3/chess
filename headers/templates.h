@@ -28,6 +28,7 @@ struct Consts{
     static Color possibleToMove;
     static Color finallywin;
     static Color finallyLose;
+    static Color background;
 };
 
 
