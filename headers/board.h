@@ -104,6 +104,8 @@ class Board{
         void drawText();
 
         void loadSound();
+
+        void animate(pair<int, int>, pair<int, int>);
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "board.h"
 #include "SFML/Audio.hpp"
+#include <unistd.h>
 
 Board::Board(RenderWindow* _window){
     window = _window;
@@ -433,9 +434,7 @@ void Board::run(){
         }
 
         window->clear(Color(120, 120, 120));
-        setText();
         draw();
-        drawText();
         window->display();
     }
 }
@@ -450,13 +449,16 @@ void Board::drawText(){
 
 
 void Board::draw(){
+    setText();
     for (int i = 0; i < 8; i++)
-        for (int j = 0; j < 8; j++){
+        for (int j = 0; j < 8; j++)
             window->draw(display[i][j]->rect);
-            if (board[i][j]->getName() != "-"){
+
+    for (int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++)
+            if (board[i][j]->getName() != "-")
                 window->draw(board[i][j]->getSprite());
-            }
-        }
+    drawText();
 }
 
 void Board::defineButton(){
@@ -535,6 +537,7 @@ void Board::mouseClicked(Vector2i v){
         checkedCell = {-1, -1};
         resetCellColors();
         selected = false;
+        animate(selectedPiece, {selectY, selectX});
         move(selectedPiece, {selectY, selectX});
         sound[0].play();
         if (Mate(turn, getOpponentColor()))
@@ -548,7 +551,6 @@ void Board::mouseClicked(Vector2i v){
                         return;
                     }
         }
-        // delay_ms(00);
         return;
     }
     
@@ -629,4 +631,20 @@ void Board::setText(){
 void Board::loadSound(){
     buffer[0].loadFromFile("./resources/audios/move.ogg");
     sound[0].setBuffer(buffer[0]);
+}
+
+
+void Board::animate(pair<int, int> start, pair<int, int> finish){
+    int xDiff = generateCellPosition(finish.F, finish.S).x - generateCellPosition(start.F, start.S).x;
+    int yDiff = generateCellPosition(finish.F, finish.S).y - generateCellPosition(start.F, start.S).y;
+    yDiff /= 30;
+    xDiff /= 30;
+    float scale = (float) xDiff / yDiff;
+    for (int i = 1; i < 30; i++){
+        board[start.F][start.S]->moveSprite(xDiff, yDiff);
+        draw();
+        // cerr << "moved a little " << board[start.F][start.S]->getSprite().getPosition().x << " " << board[start.F][start.S]->getSprite().getPosition().y << endl;
+        window->display();
+        usleep(10666);
+    }
 }

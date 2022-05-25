@@ -99,3 +99,8 @@ void Piece::setPosition(pair<int, int> pos){
 Vector2f Piece::generateCellPosition(int i, int j){
     return Vector2f(j * Consts::cellSize + (j - 1) * 3, i * Consts::cellSize + (i - 1) * 3);
 }
+
+void Piece::moveSprite(int i, int j){
+    Vector2f temp = sprite.getPosition();
+    sprite.setPosition(Vector2f(temp.x + i, temp.y + j));
+}

@@ -56,6 +56,8 @@ class Piece{
         Vector2f generateCellPosition(int i, int j);
 
         virtual void setPosition(pair<int, int> pos);
+
+        void moveSprite(int, int);
     private:
         const string Color;
         const string Name;
