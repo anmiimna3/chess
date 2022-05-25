@@ -5,8 +5,6 @@ Board::Board(RenderWindow* _window){
     window = _window;
     checkedCell = {-1, -1};
     ended = false;
-    // read();
-    // initialize();
     loadSound();
     defineButton();
     setCells();
@@ -462,26 +460,6 @@ void Board::draw(){
     drawText();
 }
 
-void Board::defineButton(){
-    resetButton.setSize(Vector2f(160, 60));
-    readButton.setSize(Vector2f(160, 60));
-    readButton.setPosition(Vector2f(830 + Consts::indexRow, 500));
-    resetButton.setPosition(Vector2f(830 + Consts::indexRow, 600));
-    resetButton.setFillColor(Color::Green);
-    readButton.setFillColor(Color::Green);
-    readButtonText.setFont(font);
-    resetButtonText.setFont(font);
-    readButtonText.setCharacterSize(30);
-    resetButtonText.setCharacterSize(30);
-    readButtonText.setPosition(Vector2f(870 + Consts::indexRow, 510));
-    resetButtonText.setPosition(Vector2f(860 + Consts::indexRow, 610));
-    readButtonText.setColor(Color::Black);
-    resetButtonText.setColor(Color::Black);
-    resetButtonText.setString("reset");
-    readButtonText.setString("read");
-    readButtonText.setStyle(Text::Bold | Text::Italic);
-    resetButtonText.setStyle(Text::Bold | Text::Italic);
-}
 
 void Board::mouseClicked(Vector2i v){
     if (v.x < 0 || v.y < 0)
@@ -511,7 +489,6 @@ void Board::mouseClicked(Vector2i v){
     if (selectX > 7 || selectY > 7)
         return;
     selectY = 7 - selectY;
-    cout << selectY << " " << selectX << endl;
     if (selected && selectX == selectedPiece.S && selectY == selectedPiece.F){
         resetCellColors();
         selected = false;
@@ -624,20 +601,20 @@ void Board::initText(){
     font.loadFromFile("./resources/fonts/Courier10PitchRegular.otf");
     status.setFont(font);
     status.setCharacterSize(21);
-    status.setColor(Color::Black);
-    status.setStyle(Text::Bold | Text::Italic);
+    status.setColor(Color::White);
+    // status.setStyle();
 }
 
 void Board::setText(){
     if (ended){
-        status.setPosition(840 + Consts::indexRow, 200);
+        status.setPosition(845 + Consts::indexRow, 40);
         if (Mate("W", "B"))
             status.setString("Black won!");
         if (Mate("B", "W"))
             status.setString("White won!");
         return;
     }
-    status.setPosition(820 + Consts::indexRow, 200);
+    status.setPosition(825 + Consts::indexRow, 40);
     string s = (turn == "W" ? "White" : "Black");
     status.setString(s + "'s turn!");
 }
@@ -649,14 +626,34 @@ void Board::loadSound(){
     sound[1].setBuffer(buffer[1]);
 }
 
+void Board::defineButton(){
+    resetButton.setSize(Vector2f(160, 60));
+    readButton.setSize(Vector2f(160, 60));
+    readButton.setPosition(Vector2f(830 + Consts::indexRow, 100));
+    resetButton.setPosition(Vector2f(830 + Consts::indexRow, 170));
+    resetButton.setFillColor(Color::Green);
+    readButton.setFillColor(Color::Green);
+    readButtonText.setFont(font);
+    resetButtonText.setFont(font);
+    readButtonText.setCharacterSize(30);
+    resetButtonText.setCharacterSize(30);
+    readButtonText.setPosition(Vector2f(870 + Consts::indexRow, 110));
+    resetButtonText.setPosition(Vector2f(860 + Consts::indexRow, 180));
+    readButtonText.setColor(Color::Black);
+    resetButtonText.setColor(Color::Black);
+    resetButtonText.setString("reset");
+    readButtonText.setString("read");
+    readButtonText.setStyle(Text::Bold | Text::Italic);
+    resetButtonText.setStyle(Text::Bold | Text::Italic);
+}
 
 void Board::animate(pair<int, int> start, pair<int, int> finish){
     int xDiff = generateCellPosition(finish.F, finish.S).x - generateCellPosition(start.F, start.S).x;
     int yDiff = generateCellPosition(finish.F, finish.S).y - generateCellPosition(start.F, start.S).y;
-    yDiff /= 20;
-    xDiff /= 20;
+    yDiff /= 10;
+    xDiff /= 10;
     float scale = (float) xDiff / yDiff;
-    for (int i = 1; i <= 20; i++){
+    for (int i = 1; i <= 10; i++){
         board[start.F][start.S]->moveSprite(xDiff, yDiff);
         draw();
         window->draw(board[start.F][start.S]->getSprite());
