@@ -492,6 +492,7 @@ void Board::mouseClicked(Vector2i v){
     if (v.x > 830 + Consts::indexRow && v.x < 890 + Consts::indexRow && v.y > 240 && v.y < 300){
         if (allMoves.empty())
             return;
+        ended = false;
         undo(allMoves.back().start, allMoves.back().finish, allMoves.back().piece);
         checkedCell = allMoves.back().checkedCell;
         resetCellColors();
