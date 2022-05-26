@@ -502,6 +502,8 @@ void Board::mouseClicked(Vector2i v){
     if (v.x > 930 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 240 && v.y < 300){
         if (temp.empty())
             return;
+        checkedCell = {-1, -1};
+        resetCellColors();
         move(temp.back().start, temp.back().finish);
         allMoves.PB(temp.back());
         temp.pop_back();
@@ -641,22 +643,22 @@ Vector2f Board::generateCellPosition(int i, int j){
 
 
 void Board::initText(){
-    font.loadFromFile("./resources/fonts/Courier10PitchRegular.otf");
+    font.loadFromFile("./resources/fonts/Chilanka-Regular.otf");
     status.setFont(font);
-    status.setCharacterSize(21);
+    status.setCharacterSize(25);
     status.setColor(Color::White);
 }
 
 void Board::setText(){
     if (ended){
-        status.setPosition(845 + Consts::indexRow, 40);
+        status.setPosition(855 + Consts::indexRow, 40);
         if (Mate("W", "B"))
             status.setString("Black won!");
         if (Mate("B", "W"))
             status.setString("White won!");
         return;
     }
-    status.setPosition(825 + Consts::indexRow, 40);
+    status.setPosition(840 + Consts::indexRow, 40);
     string s = (turn == "W" ? "White" : "Black");
     status.setString(s + "'s turn!");
 }
@@ -669,10 +671,10 @@ void Board::loadSound(){
 }
 
 void Board::createButtons(){
-    defineButton(&readButton, &readButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 100), Consts::buttons, &font, 30, Vector2f(870 + Consts::indexRow, 110), Color::Black, "read");
-    defineButton(&resetButton, &resetButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 170), Consts::buttons, &font, 30, Vector2f(860 + Consts::indexRow, 180), Color::Black, "reset");
-    defineButton(&beforeButton, &beforeButtonText, Vector2f(60, 60), Vector2f(830 + Consts::indexRow, 240), Consts::buttons, &font, 70, Vector2f(840 + Consts::indexRow, 225), Color::Black, "<");
-    defineButton(&afterButton, &afterButtonText, Vector2f(60, 60), Vector2f(930 + Consts::indexRow, 240), Consts::buttons, &font, 70, Vector2f(935 + Consts::indexRow, 225), Color::Black, ">");
+    defineButton(&readButton, &readButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 100), Consts::buttons, &font, 30, Vector2f(870 + Consts::indexRow, 110), Color::Black, "Read");
+    defineButton(&resetButton, &resetButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 170), Consts::buttons, &font, 30, Vector2f(865 + Consts::indexRow, 180), Color::Black, "Reset");
+    defineButton(&beforeButton, &beforeButtonText, Vector2f(60, 60), Vector2f(830 + Consts::indexRow, 240), Consts::buttons, &font, 70, Vector2f(840 + Consts::indexRow, 220), Color::Black, "<");
+    defineButton(&afterButton, &afterButtonText, Vector2f(60, 60), Vector2f(930 + Consts::indexRow, 240), Consts::buttons, &font, 70, Vector2f(935 + Consts::indexRow, 220), Color::Black, ">");
 }
 
 void Board::defineButton(RectangleShape *rect, Text *text, Vector2f rectSize, Vector2f rectPos, Color rectColor, Font *font, int charSize, Vector2f textPos, Color textColor, string lable){
