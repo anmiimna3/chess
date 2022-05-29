@@ -1,5 +1,6 @@
 #include "board.h"
 #include "SFML/Audio.hpp"
+#include <sstream>
 // #include <sfeMovie/Movie.hpp>
 
 Board::Board(RenderWindow* _window){
@@ -430,7 +431,15 @@ void Board::run(){
                 lock = 1;
                 mouseClicked(Mouse::getPosition(*window));
             }
-            if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && lock)
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::XButton1 && !lock){
+                lock = 1;
+                previous();
+            }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::XButton2 && !lock){
+                lock = 1;
+                next();
+            }
+            if (event.type == Event::MouseButtonReleased && lock)
                 lock = 0;
         }
         draw();
