@@ -492,38 +492,11 @@ void Board::mouseClicked(Vector2i v){
         return;
     }
     if (v.x > 830 + Consts::indexRow && v.x < 890 + Consts::indexRow && v.y > 240 && v.y < 300){
-        if (allMoves.empty())
-            return;
-        ended = false;
-        undo(allMoves.back().start, allMoves.back().finish, allMoves.back().piece);
-        checkedCell = allMoves.back().checkedCell;
-        resetCellColors();
-        // cout << checkedCell.F << " " << checkedCell.S << endl;
-        temp.PB(allMoves.back());
-        allMoves.pop_back();
+        previous();
+        return;
     }
     if (v.x > 930 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 240 && v.y < 300){
-        if (temp.empty())
-            return;
-        checkedCell = {-1, -1};
-        resetCellColors();
-        move(temp.back().start, temp.back().finish);
-        allMoves.PB(temp.back());
-        temp.pop_back();
-        sound[0].play();
-        if (Mate(turn, getOpponentColor())){
-            sound[1].play();
-            ended = true;
-        }
-        if (check(getOpponentColor())){
-            for (int i = 0; i < 8; i++)
-                for (int j = 0; j < 8; j++)
-                    if (board[i][j]->getTitle() == "K" + turn){
-                        display[i][j]->rect.setFillColor(Consts::check);
-                        checkedCell = {i, j};
-                        return;
-                    }
-        }
+        next();
         return;
     }
     if (ended)
@@ -707,4 +680,41 @@ void Board::animate(pair<int, int> start, pair<int, int> finish){
         window->draw(board[start.F][start.S]->getSprite());
         window->display();
     }
+}
+
+void Board::next(){
+    if (temp.empty())
+        return;
+    checkedCell = {-1, -1};
+    resetCellColors();
+    animate(temp.back().start, temp.back().finish);
+    move(temp.back().start, temp.back().finish);
+    allMoves.PB(temp.back());
+    temp.pop_back();
+    sound[0].play();
+    if (Mate(turn, getOpponentColor())){
+        sound[1].play();
+        ended = true;
+    }
+    if (check(getOpponentColor())){
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++)
+                if (board[i][j]->getTitle() == "K" + turn){
+                    display[i][j]->rect.setFillColor(Consts::check);
+                    checkedCell = {i, j};
+                    return;
+                }
+    }
+    return;
+}
+
+void Board::previous(){
+    if (allMoves.empty())
+        return;
+    ended = false;
+    undo(allMoves.back().start, allMoves.back().finish, allMoves.back().piece);
+    checkedCell = allMoves.back().checkedCell;
+    resetCellColors();
+    temp.PB(allMoves.back());
+    allMoves.pop_back();
 }

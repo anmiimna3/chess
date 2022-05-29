@@ -90,6 +90,8 @@ class Board{
         Sound sound[5];
         vector<singleMove> allMoves;
         vector<singleMove> temp;
+        Texture sideBarT;
+        Sprite sideBar;
 
         //Initializes the board for the first time
         void initialize();
@@ -111,6 +113,10 @@ class Board{
         void animate(pair<int, int>, pair<int, int>);
 
         void createButtons();
+
+        void next();
+
+        void previous();
 };
 
 #endif
