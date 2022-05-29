@@ -1,5 +1,6 @@
 #include "board.h"
 #include "SFML/Audio.hpp"
+// #include <sfeMovie/Movie.hpp>
 
 Board::Board(RenderWindow* _window){
     window = _window;
@@ -463,6 +464,7 @@ void Board::draw(){
             if (board[i][j]->getName() != "-")
                 window->draw(board[i][j]->getSprite());
     drawText();
+    window->draw(sideBar);
 }
 
 
@@ -625,6 +627,9 @@ void Board::setCells(){
             c->rect.setPosition(generateCellPosition(i, j));
             display[i][j] = c;
         }
+    sideBarT.loadFromFile("./resources/images/side.png");
+    sideBar.setTexture(sideBarT);
+    sideBar.setPosition(Vector2f(0, 0));
 }
 
 void Board::resetCellColors(){
