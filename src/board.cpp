@@ -556,6 +556,8 @@ void Board::mouseClicked(Vector2i v){
         tmp.start = selectedPiece;
         tmp.finish = {selectY, selectX};
         tmp.piece = stat.piece;
+        if (tmp.piece->getName() != "-")
+            board[selectY][selectX]->playKillSound();
         allMoves.PB(tmp);
         if (Mate(turn, getOpponentColor())){
             sound[1].play();

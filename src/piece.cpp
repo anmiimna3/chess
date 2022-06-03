@@ -1,24 +1,28 @@
 #include "piece.h"
 #include "templates.h"
 
-
+map <string, SoundBuffer*> killBuff;
+map <string, Sound*> killSound;
 map<string, Texture*> save;
 
 Piece::~Piece(){}
 
 Piece::Piece(): Name("-"), Color("-"){
+    loadSound();
     loadTexture();
 }
 
 Piece::Piece(string color, string name)
 :Name(name), Color(color){
-    loadTexture();        
+    loadTexture();
+    loadSound();        
 }
 
 Piece::Piece(int i, int j, string color, string name)
 : Name(name), Color(color){
     Position = {i, j};
     loadTexture();
+    loadSound();
 }
 
 bool Piece::liniar(bool found[4], int index, int x, int y, int i, int j, Piece* board[8][8]){
@@ -103,4 +107,25 @@ Vector2f Piece::generateCellPosition(int i, int j){
 void Piece::moveSprite(int i, int j){
     Vector2f temp = sprite.getPosition();
     sprite.setPosition(Vector2f(temp.x + i, temp.y + j));
+}
+
+void Piece::loadSound(){
+    if (Name == "-")
+        return;
+    if (killBuff.find(Name + "0") == killBuff.end()){
+        for (int i = 0; i < 5; i++){
+            SoundBuffer* a = new SoundBuffer();
+            a->loadFromFile("./resources/audios/" + Name + "/" + (char) (i + 48) + ".ogg");
+            killBuff.insert({Name + (char) (i + 48), a});
+            Sound* b = new Sound();
+            b->setBuffer(*a);
+            killSound.insert({Name + (char) (i + 48), b});
+        }
+    }
+}
+
+void Piece::playKillSound(){
+    srand(time(0));
+    int x = rand() % 5;
+    killSound.at(Name + (char) (x + 48))->play();
 }

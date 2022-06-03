@@ -58,6 +58,10 @@ class Piece{
         virtual void setPosition(pair<int, int> pos);
 
         void moveSprite(int, int);
+
+        void loadSound();
+
+        void playKillSound();
     private:
         const string Color;
         const string Name;
