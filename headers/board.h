@@ -94,6 +94,12 @@ class Board{
         Sprite sideBar;
         SoundBuffer backgroundMusicBuff;
         Sound backgroundMusic;
+        map<string, Sprite*> globalPieces;
+        map<string, Texture*> globalTextures;
+        map<string, Vector2f> globalPiecePosition;
+        bool isReading;
+        King* whiteKing, *blackKing;
+        int whiteKingCount, blackKingCount;
 
         //Initializes the board for the first time
         void initialize();
@@ -121,6 +127,16 @@ class Board{
         void previous();
 
         void playBackgroundMusic();
+
+        void changeStatusOfButtons();
+
+        string dragHandler(Vector2i);
+
+        void moveGlobalSprint(Vector2i, string);
+
+        void emptyBoard();
+
+        bool drop(Vector2i, string);
 };
 
 #endif

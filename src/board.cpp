@@ -12,10 +12,12 @@ Board::Board(RenderWindow* _window){
     setCells();
     initText();
     turn = "W";
+    isReading = false;
 }
 Board::Board(bool custom){
     setCells();
     turn = "W";
+    isReading = false;
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++){
             Null* null = new Null();
@@ -25,6 +27,7 @@ Board::Board(bool custom){
 
 Board::Board(Piece* board[8][8], string turn){
     setCells();
+    isReading = false;
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
             place(board[i][j], i, j);
@@ -232,6 +235,8 @@ bool Board::check(string turn){
         if (found)
             break;
     }
+    if (!found)
+        return false;
     if (board[p][q]->getColor() == "W"){
         if (p + 1 < 8 && q + 1 < 8){
             string temp1 = board[p + 1][q + 1]->getName() + board[p + 1][q + 1]->getColor();
@@ -420,12 +425,32 @@ void Board::read(){
 void Board::run(){
     initialize();
     window->display();
+    bool globalPieceSelected = false;
+    string globalPieceSelectedStr = "";
     while(window->isOpen()){
         Event event;
         while(window->pollEvent(event)){
             playBackgroundMusic();
             if (event.type == Event::Closed){
                 window->close();
+            }
+            if (isReading){
+                if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !globalPieceSelected){
+                    globalPieceSelectedStr = dragHandler(Mouse::getPosition(*window));
+                    if (globalPieceSelectedStr != "")
+                        globalPieceSelected = true;
+                }
+                if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && globalPieceSelected){
+                    bool x = drop(Mouse::getPosition(*window), globalPieceSelectedStr);
+                    if (x){
+                        globalPieceSelectedStr = "";
+                        globalPieceSelected = false;
+                    }
+                }
+                if (event.type == Event::MouseMoved && globalPieceSelected){
+                    moveGlobalSprint(Mouse::getPosition(*window), globalPieceSelectedStr);
+                }
+                continue;
             }
             bool lock;
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !lock){
@@ -458,7 +483,13 @@ void Board::drawText(){
     window->draw(readButtonText);
     window->draw(beforeButtonText);
     window->draw(afterButtonText);
-
+    if (isReading){
+        string x[6] = {"R", "B", "P", "K", "Q", "N"};
+        string y[2] = {"W", "B"};
+        for (auto u: x)
+            for (auto v: y)
+                window->draw(*globalPieces.at(u + v));
+    }
 }
 
 
@@ -482,16 +513,36 @@ void Board::mouseClicked(Vector2i v){
     if (v.x < 0 || v.y < 0)
         return;
     if (v.x > 830 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 100 && v.y < 160){
-        string temp;
-        cin >> temp;
-        turn = temp == "W" ? "W" : "B";
         allMoves.clear();
         temp.clear();
-        read();
+        changeStatusOfButtons();
+        isReading = (isReading ? false : true);
+        if (isReading){
+            emptyBoard();
+            King* k = new King(100, 100, "W");
+            whiteKing = k;
+            King* kk = new King(100, 100, "B");
+            blackKing = kk;
+            blackKingCount = 0;
+            whiteKingCount = 0;
+            ended = false;
+            checkedCell = {-1, -1};
+            resetCellColors();
+            turn = "W";
+        }
+        else{
+            whiteKing->whiteKing = whiteKing;
+            whiteKing->blackKing = blackKing;
+            blackKing->whiteKing = whiteKing;
+            blackKing->blackKing = blackKing;
+        }
         return;
     }
     if (v.x > 830 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 170 && v.y < 230){
         checkedCell = {-1, -1};
+        isReading = true;
+        changeStatusOfButtons();
+        isReading = false;
         ended = false;
         allMoves.clear();
         temp.clear();
@@ -502,10 +553,22 @@ void Board::mouseClicked(Vector2i v){
         return;
     }
     if (v.x > 830 + Consts::indexRow && v.x < 890 + Consts::indexRow && v.y > 240 && v.y < 300){
+        if (isReading){
+            turn = "B";
+            beforeButtonText.setString("*");
+            afterButtonText.setString("");
+            return;
+        }
         previous();
         return;
     }
     if (v.x > 930 + Consts::indexRow && v.x < 990 + Consts::indexRow && v.y > 240 && v.y < 300){
+        if (isReading){
+            turn = "W";
+            beforeButtonText.setString("");
+            afterButtonText.setString("*");
+            return;
+        }
         next();
         return;
     }
@@ -673,6 +736,25 @@ void Board::createButtons(){
     defineButton(&resetButton, &resetButtonText, Vector2f(160, 60), Vector2f(830 + Consts::indexRow, 170), Consts::buttons, &font, 30, Vector2f(865 + Consts::indexRow, 180), Color::Black, "Reset");
     defineButton(&beforeButton, &beforeButtonText, Vector2f(60, 60), Vector2f(830 + Consts::indexRow, 240), Consts::buttons, &font, 70, Vector2f(840 + Consts::indexRow, 220), Color::Black, "<");
     defineButton(&afterButton, &afterButtonText, Vector2f(60, 60), Vector2f(930 + Consts::indexRow, 240), Consts::buttons, &font, 70, Vector2f(935 + Consts::indexRow, 220), Color::Black, ">");
+    string x[6] = {"R", "B", "P", "K", "Q", "N"};
+    string y[2] = {"W", "B"};
+    int i = 300, j = 860;
+    for (auto v: x){
+        for (auto u: y){
+            Texture *a = new Texture();
+            a->loadFromFile("./resources/images/" + v + u + ".png");
+            Sprite *b = new Sprite();
+            b->setTexture(*a);
+            b->setPosition(Vector2f(j, i));
+            b->setScale(Vector2f(0.9, 0.9));
+            a->setSmooth(true);
+            globalPiecePosition.insert({v + u, Vector2f(j, i)});
+            globalPieces.insert({v + u, b});
+            globalTextures.insert({v + u, a});
+            j = (j == 860 ? 950 : 860);
+        }
+        i += 90;
+    }
 }
 
 void Board::defineButton(RectangleShape *rect, Text *text, Vector2f rectSize, Vector2f rectPos, Color rectColor, Font *font, int charSize, Vector2f textPos, Color textColor, string lable){
@@ -741,4 +823,129 @@ void Board::previous(){
 void Board::playBackgroundMusic(){
     if (backgroundMusic.getStatus() != Sound::Status::Playing)
         backgroundMusic.play();
+}
+
+void Board::changeStatusOfButtons(){
+    if (isReading){
+        readButtonText.setString("Read");
+        beforeButton.setFillColor(Consts::buttons);
+        afterButton.setFillColor(Consts::buttons);
+        beforeButtonText.setColor(Color::Black);
+        afterButtonText.setColor(Color::Black);
+        beforeButtonText.setString("<");
+        afterButtonText.setString(">");
+    }
+    else{
+        readButtonText.setString("Start");
+        beforeButton.setFillColor(Color::Black);
+        afterButton.setFillColor(Color::White);
+        beforeButtonText.setColor(Color::Cyan);
+        afterButtonText.setColor(Color::Cyan);
+        beforeButtonText.setString("");
+        afterButtonText.setString("*");
+    }
+}
+
+string Board::dragHandler(Vector2i v){
+    if (v.x > 870 && v.y < 300){
+        mouseClicked(v);
+        return "";
+    }
+    if (v.x < 860 || v.y > 830)
+        return "";
+    int selectX = v.x, selectY = v.y;
+    selectY -= 300;
+    selectY /= 90;
+    string key = "";
+    if (selectY == 0)
+        key = "R";
+    else if (selectY == 1)
+        key = "B";
+    else if (selectY == 2)
+        key = "P";
+    else if (selectY == 3)
+        key = "K";
+    else if (selectY == 4)
+        key = "Q";
+    else if (selectY == 5)
+        key = "N";
+    if (selectX < 950)
+        key += "W";
+    else 
+        key += "B";
+    return key;
+}
+
+void Board::moveGlobalSprint(Vector2i v, string piece){
+    globalPieces.at(piece)->setPosition(Vector2f(v.x - 40, v.y - 40));
+}
+
+void Board::emptyBoard(){
+    for (int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++){
+            Null *n = new Null();
+            Piece *temp = board[i][j];
+            place((Piece*) n, i, j);
+            delete temp;
+        }
+}
+
+bool Board::drop(Vector2i v, string name){
+    string color;
+    v.x -= Consts::indexRow;
+    if (v.y < 0 || v.x < 0)
+        return false;
+    int selectX = v.x / 103, selectY = v.y / 103;
+    if (selectX > 7 || selectY > 7)
+        return false;
+    selectY = 7 - selectY;
+    Piece *temp = board[selectY][selectX];
+    if (name[1] == 'W')
+        color = "W";
+    else
+        color = "B";
+    if (name[0] == 'R')
+        Costume::placing<Rook>(this, selectY, selectX, color);
+    if (name[0] == 'Q')
+        Costume::placing<Queen>(this, selectY, selectX, color);
+    if (name[0] == 'N')
+        Costume::placing<Knight>(this, selectY, selectX, color);
+    if (name[0] == 'P')
+        Costume::placing<Pawn>(this, selectY, selectX, color);
+    if (name[0] == 'B')
+        Costume::placing<Bishop>(this, selectY, selectX, color);
+    if (name[0] == 'K'){
+        if (color == "W")
+            if (whiteKingCount == 0){
+                Piece* kk = Costume::placing<King>(this, selectY, selectX, color);
+                whiteKing = (King*) kk;
+                whiteKingCount++;
+            }
+            else{
+                globalPieces.at(name)->setPosition(globalPiecePosition.at(name));
+                return true;
+            }
+        if (color == "B")
+            if (blackKingCount == 0){
+                Piece* kk = Costume::placing<King>(this, selectY, selectX, color);
+                blackKing = (King*) kk;
+                blackKingCount++;
+            }
+            else{
+                globalPieces.at(name)->setPosition(globalPiecePosition.at(name));
+                return true;
+            }
+    }
+    if (temp->getTitle() == "KW"){
+        King* k = new King(100, 100, "W");
+        whiteKing = k;
+        whiteKingCount = 0;
+    }
+    if (temp->getTitle() == "KB"){
+        King* k = new King(100, 100, "B");
+        blackKing = k;
+        blackKingCount = 0;
+    }
+    delete temp;
+    globalPieces.at(name)->setPosition(globalPiecePosition.at(name));
 }
