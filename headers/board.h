@@ -92,6 +92,8 @@ class Board{
         vector<singleMove> temp;
         Texture sideBarT;
         Sprite sideBar;
+        SoundBuffer backgroundMusicBuff;
+        Sound backgroundMusic;
 
         //Initializes the board for the first time
         void initialize();
@@ -117,6 +119,8 @@ class Board{
         void next();
 
         void previous();
+
+        void playBackgroundMusic();
 };
 
 #endif

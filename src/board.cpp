@@ -423,6 +423,7 @@ void Board::run(){
     while(window->isOpen()){
         Event event;
         while(window->pollEvent(event)){
+            playBackgroundMusic();
             if (event.type == Event::Closed){
                 window->close();
             }
@@ -659,9 +660,12 @@ void Board::loadSound(){
     buffer[1].loadFromFile("./resources/audios/mate.ogg");
     buffer[0].loadFromFile("./resources/audios/move.ogg");
     buffer[2].loadFromFile("./resources/audios/check.ogg");
+    backgroundMusicBuff.loadFromFile("./resources/audios/background.ogg");
     sound[2].setBuffer(buffer[2]);
     sound[0].setBuffer(buffer[0]);
     sound[1].setBuffer(buffer[1]);
+    backgroundMusic.setBuffer(backgroundMusicBuff);
+    backgroundMusic.setVolume(40);
 }
 
 void Board::createButtons(){
@@ -732,4 +736,9 @@ void Board::previous(){
     resetCellColors();
     temp.PB(allMoves.back());
     allMoves.pop_back();
+}
+
+void Board::playBackgroundMusic(){
+    if (backgroundMusic.getStatus() != Sound::Status::Playing)
+        backgroundMusic.play();
 }
