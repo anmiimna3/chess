@@ -557,7 +557,6 @@ void Board::mouseClicked(Vector2i v){
         tmp.finish = {selectY, selectX};
         tmp.piece = stat.piece;
         allMoves.PB(tmp);
-        sound[0].play();
         if (Mate(turn, getOpponentColor())){
             sound[1].play();
             ended = true;
@@ -566,11 +565,14 @@ void Board::mouseClicked(Vector2i v){
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
                     if (board[i][j]->getTitle() == "K" + turn){
+                        if (!ended)
+                            sound[2].play();
                         display[i][j]->rect.setFillColor(Consts::check);
                         checkedCell = {i, j};
                         return;
                     }
         }
+        sound[0].play();
         return;
     }
     
@@ -654,6 +656,8 @@ void Board::setText(){
 void Board::loadSound(){
     buffer[1].loadFromFile("./resources/audios/mate.ogg");
     buffer[0].loadFromFile("./resources/audios/move.ogg");
+    buffer[2].loadFromFile("./resources/audios/check.ogg");
+    sound[2].setBuffer(buffer[2]);
     sound[0].setBuffer(buffer[0]);
     sound[1].setBuffer(buffer[1]);
 }
