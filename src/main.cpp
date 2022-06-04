@@ -16,7 +16,7 @@ void sort(vector<string> &v){
 
 int main(){
     auto image = Image();
-    image.loadFromFile("./resources/images/icon.png");
+    image.loadFromFile("./resources/images/icon.jpg");
     RenderWindow window(VideoMode(1000 + Consts::indexRow, 812 + Consts::indexRow), "chess", Style::Titlebar | Style::Close);
     window.setFramerateLimit(60);
     window.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
