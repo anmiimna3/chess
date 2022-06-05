@@ -140,6 +140,10 @@ class Board{
         bool drop(Vector2i, string);
 
         void loadingScreen();
+
+        void emptyOneCell(int, int);
+
+        void emptyOneCellv(Vector2i);
 };
 
 #endif

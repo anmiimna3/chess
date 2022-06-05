@@ -436,6 +436,14 @@ void Board::run(){
                 window->close();
             }
             if (isReading){
+                if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Right && !globalPieceSelected){
+                    emptyOneCellv(Mouse::getPosition(*window));
+                }
+                if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Right && globalPieceSelected){
+                    globalPieceSelected = false;
+                    globalPieces.at(globalPieceSelectedStr)->setPosition(globalPiecePosition.at(globalPieceSelectedStr));
+                    globalPieceSelectedStr = "";
+                }
                 if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !globalPieceSelected){
                     globalPieceSelectedStr = dragHandler(Mouse::getPosition(*window));
                     if (globalPieceSelectedStr != "")
@@ -522,8 +530,12 @@ void Board::mouseClicked(Vector2i v){
             emptyBoard();
             King* k = new King(100, 100, "W");
             whiteKing = k;
-            King* kk = new King(100, 100, "B");
+            King* kk = new King(200, 200, "B");
             blackKing = kk;
+            blackKing->blackKing = kk;
+            blackKing->whiteKing = whiteKing;
+            whiteKing->whiteKing = whiteKing;
+            whiteKing->blackKing = blackKing;
             blackKingCount = 0;
             whiteKingCount = 0;
             ended = false;
@@ -901,10 +913,7 @@ bool Board::drop(Vector2i v, string name){
         return false;
     selectY = 7 - selectY;
     Piece *temp = board[selectY][selectX];
-    if (name[1] == 'W')
-        color = "W";
-    else
-        color = "B";
+    color = (name[1] == 'W' ? "W" : "B");
     if (name[0] == 'R')
         Costume::placing<Rook>(this, selectY, selectX, color);
     if (name[0] == 'Q')
@@ -919,7 +928,10 @@ bool Board::drop(Vector2i v, string name){
         if (color == "W")
             if (whiteKingCount == 0){
                 Piece* kk = Costume::placing<King>(this, selectY, selectX, color);
-                whiteKing = (King*) kk;
+                this->whiteKing = (King*) kk;
+                this->whiteKing->blackKing = blackKing;
+                this->whiteKing->whiteKing = whiteKing;
+                this->blackKing->whiteKing = (King*) kk;
                 whiteKingCount++;
             }
             else{
@@ -929,8 +941,11 @@ bool Board::drop(Vector2i v, string name){
         if (color == "B")
             if (blackKingCount == 0){
                 Piece* kk = Costume::placing<King>(this, selectY, selectX, color);
-                blackKing = (King*) kk;
-                blackKingCount++;
+                this->blackKing = (King*) kk;
+                this->blackKing->whiteKing = whiteKing;
+                this->blackKing->blackKing = blackKing;
+                this->whiteKing->blackKing = blackKing;
+                this->blackKingCount++;
             }
             else{
                 globalPieces.at(name)->setPosition(globalPiecePosition.at(name));
@@ -943,9 +958,40 @@ bool Board::drop(Vector2i v, string name){
         whiteKingCount = 0;
     }
     if (temp->getTitle() == "KB"){
-        King* k = new King(100, 100, "B");
+        King* k = new King(200, 200, "B");
         blackKing = k;
         blackKingCount = 0;
+    }
+    if (check("W") || check("B")){
+        cerr << "here\n";
+        if (board[selectY][selectX]->getTitle() == "KW"){
+            King* k = new King(100, 100, "W");
+            whiteKing = k;
+            whiteKingCount = 0;
+        }
+        if (board[selectY][selectX]->getTitle() == "KB"){
+            King* k = new King(200, 200, "B");
+            blackKing = k;
+            blackKingCount = 0;
+        }
+        globalPieces.at(name)->setPosition(globalPiecePosition.at(name));
+        emptyOneCell(selectY, selectX);
+        return true;
+    }
+    if (board[selectY][selectX]->getName() == "K" && (whiteKing->badDistance(0, 0, "W") || blackKing->badDistance(0, 0, "B"))){
+        globalPieces.at(name)->setPosition(globalPiecePosition.at(name));
+        if (board[selectY][selectX]->getColor() == "W"){
+            King* k = new King(100, 100, "W");
+            whiteKing = k;
+            whiteKingCount = 0;
+        }
+        else{
+            King* k = new King(200, 200, "B");
+            blackKing = k;
+            blackKingCount = 0;
+        }
+        emptyOneCell(selectY, selectX);
+        return true;
     }
     delete temp;
     globalPieces.at(name)->setPosition(globalPiecePosition.at(name));
@@ -959,9 +1005,41 @@ void Board::loadingScreen(){
         s.setTexture(t);
         s.setScale(Vector2f(1, 1));
         s.setPosition(Vector2f(0, 0));
-        for (int j = 0; j < 500000000; j++)
-            true;
-        window->draw(s);
-        window->display();
+        for (int j = 0; j < 7; j++){
+            window->draw(s);
+            window->display();
+        }
     }
+}
+
+void Board::emptyOneCell(int i, int j){
+    if (board[i][j]->getName() == "-"){
+        return;
+    }
+    Null *n = new Null();
+    Piece* temp = place((Piece*) n, i, j);
+    if (temp->getName() == "K"){
+        if (temp->getColor() == "W"){
+            King* k = new King(100, 100, "W");
+            whiteKing = k;
+            whiteKingCount = 0;
+        }
+        else{
+            King* k = new King(200, 200, "B");
+            blackKing = k;
+            blackKingCount = 0;
+        }
+    }
+    delete temp;
+}
+
+void Board::emptyOneCellv(Vector2i v){
+    v.x -= Consts::indexRow;
+    if (v.y < 0 || v.x < 0)
+        return;
+    int selectX = v.x / 103, selectY = v.y / 103;
+    if (selectX > 7 || selectY > 7)
+        return;
+    selectY = 7 - selectY;
+    emptyOneCell(selectY, selectX);
 }
