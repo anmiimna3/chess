@@ -100,6 +100,7 @@ class Board{
         bool isReading;
         King* whiteKing, *blackKing;
         int whiteKingCount, blackKingCount;
+        Texture t;
 
         //Initializes the board for the first time
         void initialize();
@@ -137,6 +138,8 @@ class Board{
         void emptyBoard();
 
         bool drop(Vector2i, string);
+
+        void loadingScreen();
 };
 
 #endif

@@ -5,6 +5,7 @@
 
 Board::Board(RenderWindow* _window){
     window = _window;
+    loadingScreen();
     checkedCell = {-1, -1};
     ended = false;
     loadSound();
@@ -948,4 +949,19 @@ bool Board::drop(Vector2i v, string name){
     }
     delete temp;
     globalPieces.at(name)->setPosition(globalPiecePosition.at(name));
+}
+
+void Board::loadingScreen(){
+    for (int i = 'a'; i <= 'r'; i++){
+        string x = string("./resources/images/loadingScreen/") + (char) i + ".jpg";
+        t.loadFromFile(x);
+        Sprite s;
+        s.setTexture(t);
+        s.setScale(Vector2f(1, 1));
+        s.setPosition(Vector2f(0, 0));
+        for (int j = 0; j < 500000000; j++)
+            true;
+        window->draw(s);
+        window->display();
+    }
 }
