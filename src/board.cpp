@@ -715,7 +715,7 @@ void Board::initText(){
     font.loadFromFile("./resources/fonts/Chilanka-Regular.otf");
     status.setFont(font);
     status.setCharacterSize(25);
-    status.setColor(Color::White);
+    status.setFillColor(Color::White);
 }
 
 void Board::setText(){
@@ -777,7 +777,7 @@ void Board::defineButton(RectangleShape *rect, Text *text, Vector2f rectSize, Ve
     text->setFont(*font);
     text->setCharacterSize(charSize);
     text->setPosition(textPos);
-    text->setColor(textColor);
+    text->setFillColor(textColor);
     text->setString(lable);
     text->setStyle(Text::Bold);
 }
@@ -843,8 +843,8 @@ void Board::changeStatusOfButtons(){
         readButtonText.setString("Read");
         beforeButton.setFillColor(Consts::buttons);
         afterButton.setFillColor(Consts::buttons);
-        beforeButtonText.setColor(Color::Black);
-        afterButtonText.setColor(Color::Black);
+        beforeButtonText.setFillColor(Color::Black);
+        afterButtonText.setFillColor(Color::Black);
         beforeButtonText.setString("<");
         afterButtonText.setString(">");
     }
@@ -852,8 +852,8 @@ void Board::changeStatusOfButtons(){
         readButtonText.setString("Start");
         beforeButton.setFillColor(Color::Black);
         afterButton.setFillColor(Color::White);
-        beforeButtonText.setColor(Color::Cyan);
-        afterButtonText.setColor(Color::Cyan);
+        beforeButtonText.setFillColor(Color::Cyan);
+        afterButtonText.setFillColor(Color::Cyan);
         beforeButtonText.setString("");
         afterButtonText.setString("*");
     }
@@ -999,6 +999,7 @@ bool Board::drop(Vector2i v, string name){
     }
     delete temp;
     globalPieces.at(name)->setPosition(globalPiecePosition.at(name));
+    return true;
 }
 
 void Board::loadingScreen(){
