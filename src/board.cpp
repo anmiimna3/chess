@@ -955,11 +955,15 @@ bool Board::drop(Vector2i v, string name){
     if (temp->getTitle() == "KW"){
         King* k = new King(100, 100, "W");
         whiteKing = k;
+        whiteKing->whiteKing = whiteKing;
+        whiteKing->blackKing = blackKing;
         whiteKingCount = 0;
     }
     if (temp->getTitle() == "KB"){
         King* k = new King(200, 200, "B");
         blackKing = k;
+        blackKing->blackKing = blackKing;
+        blackKing->whiteKing = whiteKing;
         blackKingCount = 0;
     }
     if (check("W") || check("B")){
@@ -1022,11 +1026,15 @@ void Board::emptyOneCell(int i, int j){
         if (temp->getColor() == "W"){
             King* k = new King(100, 100, "W");
             whiteKing = k;
+            whiteKing->whiteKing = whiteKing;
+            whiteKing->blackKing = blackKing;
             whiteKingCount = 0;
         }
         else{
             King* k = new King(200, 200, "B");
-            blackKing = k;
+            this->blackKing = k;
+            blackKing->blackKing = blackKing;
+            blackKing->whiteKing = whiteKing;
             blackKingCount = 0;
         }
     }
